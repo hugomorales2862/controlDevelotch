@@ -10,12 +10,26 @@
                     </a>
                 </div>
 
-                <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                </div>
+                <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                    {{ __('Dashboard') }}
+                </x-nav-link>
+                <x-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')">
+                    {{ __('Clientes') }}
+                </x-nav-link>
+                <x-nav-link :href="route('servicios.index')" :active="request()->routeIs('servicios.*')">
+                    {{ __('Servicios') }}
+                </x-nav-link>
+                <x-nav-link :href="route('pagos.index')" :active="request()->routeIs('pagos.*')">
+                    {{ __('Pagos') }}
+                </x-nav-link>
+                <x-nav-link :href="route('transacciones.index')" :active="request()->routeIs('transacciones.*')">
+                    {{ __('Finanzas') }}
+                </x-nav-link>
+                <x-nav-link :href="route('tickets.index')" :active="request()->routeIs('tickets.*')">
+                    {{ __('Soporte') }}
+                </x-nav-link>
+            </div>
             </div>
 
             <!-- Settings Dropdown -->

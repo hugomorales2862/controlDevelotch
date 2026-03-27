@@ -11,25 +11,25 @@
                 </div>
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                    {{ __('Dashboard') }}
-                </x-nav-link>
-                <x-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')">
-                    {{ __('Clientes') }}
-                </x-nav-link>
-                <x-nav-link :href="route('servicios.index')" :active="request()->routeIs('servicios.*')">
-                    {{ __('Servicios') }}
-                </x-nav-link>
-                <x-nav-link :href="route('pagos.index')" :active="request()->routeIs('pagos.*')">
-                    {{ __('Pagos') }}
-                </x-nav-link>
-                <x-nav-link :href="route('transacciones.index')" :active="request()->routeIs('transacciones.*')">
-                    {{ __('Finanzas') }}
-                </x-nav-link>
-                <x-nav-link :href="route('tickets.index')" :active="request()->routeIs('tickets.*')">
-                    {{ __('Soporte') }}
-                </x-nav-link>
-            </div>
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                        {{ __('Panel') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('clients.index')" :active="request()->routeIs('clients.*')">
+                        {{ __('Clientes') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('services.index')" :active="request()->routeIs('services.*')">
+                        {{ __('Servicios') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('subscriptions.index')" :active="request()->routeIs('subscriptions.*')">
+                        {{ __('Suscripciones') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('sales.index')" :active="request()->routeIs('sales.*')">
+                        {{ __('Ventas') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('expenses.index')" :active="request()->routeIs('expenses.*')">
+                        {{ __('Gastos') }}
+                    </x-nav-link>
+                </div>
             </div>
 
             <!-- Settings Dropdown -->
@@ -82,7 +82,22 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
+                {{ __('Panel') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('clients.index')" :active="request()->routeIs('clients.*')">
+                {{ __('Clientes') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('services.index')" :active="request()->routeIs('services.*')">
+                {{ __('Servicios') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('subscriptions.index')" :active="request()->routeIs('subscriptions.*')">
+                {{ __('Suscripciones') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('sales.index')" :active="request()->routeIs('sales.*')">
+                {{ __('Ventas') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('expenses.index')" :active="request()->routeIs('expenses.*')">
+                {{ __('Gastos') }}
             </x-responsive-nav-link>
         </div>
 

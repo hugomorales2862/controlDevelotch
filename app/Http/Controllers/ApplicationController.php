@@ -51,6 +51,12 @@ class ApplicationController extends Controller
         return redirect()->route('applications.index')->with('success', 'Datos de la aplicación actualizados.');
     }
 
+    public function show(Application $application)
+    {
+        $application->load('services');
+        return view('applications.show', compact('application'));
+    }
+
     public function destroy(Application $application)
     {
         $application->delete();

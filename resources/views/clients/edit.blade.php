@@ -16,35 +16,35 @@
                         <!-- Name -->
                         <div>
                             <label for="name" class="block font-medium text-xs text-slate-400 uppercase tracking-widest mb-1">Nombre Principal</label>
-                            <input id="name" class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white shadow-sm placeholder-slate-600 py-3 px-4" type="text" name="name" :value="old('name', $client->name)" required autofocus />
+                            <input id="name" class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white shadow-sm placeholder-slate-600 py-3 px-4" type="text" name="name" value="{{ old('name', $client->name) }}" required autofocus />
                             <x-input-error :messages="$errors->get('name')" class="mt-2 text-rose-400" />
                         </div>
 
                         <!-- Company -->
                         <div>
                             <label for="company" class="block font-medium text-xs text-slate-400 uppercase tracking-widest mb-1">Empresa (Opcional)</label>
-                            <input id="company" class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white shadow-sm placeholder-slate-600 py-3 px-4" type="text" name="company" :value="old('company', $client->company)" />
+                            <input id="company" class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white shadow-sm placeholder-slate-600 py-3 px-4" type="text" name="company" value="{{ old('company', $client->company) }}" />
                             <x-input-error :messages="$errors->get('company')" class="mt-2 text-rose-400" />
                         </div>
 
                         <!-- Email -->
                         <div>
                             <label for="email" class="block font-medium text-xs text-slate-400 uppercase tracking-widest mb-1">Correo Electrónico</label>
-                            <input id="email" class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white shadow-sm placeholder-slate-600 py-3 px-4" type="email" name="email" :value="old('email', $client->email)" required />
+                            <input id="email" class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white shadow-sm placeholder-slate-600 py-3 px-4" type="email" name="email" value="{{ old('email', $client->email) }}" required />
                             <x-input-error :messages="$errors->get('email')" class="mt-2 text-rose-400" />
                         </div>
 
                         <!-- Phone -->
                         <div>
                             <label for="phone" class="block font-medium text-xs text-slate-400 uppercase tracking-widest mb-1">Teléfono (Opcional)</label>
-                            <input id="phone" class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white shadow-sm placeholder-slate-600 py-3 px-4" type="text" name="phone" :value="old('phone', $client->phone)" />
+                            <input id="phone" class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white shadow-sm placeholder-slate-600 py-3 px-4" type="text" name="phone" value="{{ old('phone', $client->phone) }}" />
                             <x-input-error :messages="$errors->get('phone')" class="mt-2 text-rose-400" />
                         </div>
                         
                         <!-- Contact Name -->
                         <div class="md:col-span-2">
                             <label for="contact_name" class="block font-medium text-xs text-slate-400 uppercase tracking-widest mb-1">Nombre de Persona de Contacto (Opcional)</label>
-                            <input id="contact_name" class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white shadow-sm placeholder-slate-600 py-3 px-4" type="text" name="contact_name" :value="old('contact_name', $client->contact_name)" />
+                            <input id="contact_name" class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white shadow-sm placeholder-slate-600 py-3 px-4" type="text" name="contact_name" value="{{ old('contact_name', $client->contact_name) }}" />
                             <x-input-error :messages="$errors->get('contact_name')" class="mt-2 text-rose-400" />
                         </div>
                     </div>

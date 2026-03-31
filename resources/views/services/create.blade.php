@@ -25,19 +25,19 @@
                         </div>
                         <div class="md:col-span-2">
                             <label for="name" class="block font-medium text-xs text-slate-400 uppercase tracking-widest mb-1">Nombre del Plan</label>
-                            <input id="name" class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white shadow-sm py-3 px-4" type="text" name="name" :value="old('name')" required autofocus />
+                            <input id="name" class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white shadow-sm py-3 px-4" type="text" name="name" value="{{ old('name') }}" required autofocus />
                             <x-input-error :messages="$errors->get('name')" class="mt-2 text-rose-400" />
                         </div>
 
                         <div>
                             <label for="price" class="block font-medium text-xs text-slate-400 uppercase tracking-widest mb-1">Precio Total ($)</label>
-                            <input id="price" class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-[#00f6ff] font-bold shadow-sm py-3 px-4" type="number" step="0.01" name="price" :value="old('price')" required />
+                            <input id="price" class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-[#00f6ff] font-bold shadow-sm py-3 px-4" type="number" step="0.01" name="price" value="{{ old('price') }}" required />
                             <x-input-error :messages="$errors->get('price')" class="mt-2 text-rose-400" />
                         </div>
 
                         <div>
                             <label for="duration_days" class="block font-medium text-xs text-slate-400 uppercase tracking-widest mb-1">Duración (Días)</label>
-                            <input id="duration_days" class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white shadow-sm py-3 px-4" type="number" name="duration_days" :value="old('duration_days', 30)" required />
+                            <input id="duration_days" class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white shadow-sm py-3 px-4" type="number" name="duration_days" value="{{ old('duration_days', 30) }}" required />
                             <x-input-error :messages="$errors->get('duration_days')" class="mt-2 text-rose-400" />
                         </div>
 

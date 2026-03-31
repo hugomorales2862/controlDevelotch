@@ -22,13 +22,13 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="md:col-span-2">
                             <label class="block font-medium text-xs text-slate-400 uppercase tracking-widest mb-1">Nombre de la Aplicación</label>
-                            <input class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white py-3 px-4" type="text" name="name" :value="old('name', $application->name)" required autofocus />
+                            <input class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white py-3 px-4" type="text" name="name" value="{{ old('name', $application->name) }}" required autofocus />
                             <x-input-error :messages="$errors->get('name')" class="mt-2 text-rose-400" />
                         </div>
 
                         <div>
                             <label class="block font-medium text-xs text-slate-400 uppercase tracking-widest mb-1">URL</label>
-                            <input class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-[#00f6ff] py-3 px-4" type="url" name="url" :value="old('url', $application->url)" />
+                            <input class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-[#00f6ff] py-3 px-4" type="url" name="url" value="{{ old('url', $application->url) }}" />
                             <x-input-error :messages="$errors->get('url')" class="mt-2 text-rose-400" />
                         </div>
 

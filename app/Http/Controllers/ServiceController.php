@@ -24,15 +24,25 @@ class ServiceController extends Controller
     {
         $validated = $request->validate([
             'application_id' => 'required|exists:applications,id',
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'duration_days' => 'required|integer|min:1',
-            'features' => 'nullable|string'
+            'name'           => 'required|string|max:255',
+            'description'    => 'nullable|string|max:500',
+            'price'          => 'required|numeric|min:0',
+            'duration_days'  => 'required|integer|min:1',
+            'type'           => 'nullable|in:hosting,dominio,soporte,desarrollo,mantenimiento,otro',
+            'billing_cycle'  => 'nullable|in:weekly,monthly,yearly,triennial',
+            'features'       => 'nullable|string',
         ]);
 
         Service::create($validated);
 
-        return redirect()->route('services.index')->with('success', 'Plan registrado exitosamente bajo la aplicación asociada.');
+        return redirect()->route('services.index')
+            ->with('success', '✅ Plan registrado exitosamente.');
+    }
+
+    public function show(Service $service)
+    {
+        $service->load(['application', 'subscriptions.client']);
+        return view('services.show', compact('service'));
     }
 
     public function edit(Service $service)
@@ -45,20 +55,25 @@ class ServiceController extends Controller
     {
         $validated = $request->validate([
             'application_id' => 'required|exists:applications,id',
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'duration_days' => 'required|integer|min:1',
-            'features' => 'nullable|string'
+            'name'           => 'required|string|max:255',
+            'description'    => 'nullable|string|max:500',
+            'price'          => 'required|numeric|min:0',
+            'duration_days'  => 'required|integer|min:1',
+            'type'           => 'nullable|in:hosting,dominio,soporte,desarrollo,mantenimiento,otro',
+            'billing_cycle'  => 'nullable|in:weekly,monthly,yearly,triennial',
+            'features'       => 'nullable|string',
         ]);
 
         $service->update($validated);
 
-        return redirect()->route('services.index')->with('success', 'Plan comercial actualizado.');
+        return redirect()->route('services.index')
+            ->with('success', '✅ Plan "' . $service->name . '" actualizado correctamente.');
     }
 
     public function destroy(Service $service)
     {
         $service->delete();
-        return redirect()->route('services.index')->with('success', 'Plan eliminado exitosamente.');
+        return redirect()->route('services.index')
+            ->with('success', '🗑️ Plan eliminado exitosamente.');
     }
 }

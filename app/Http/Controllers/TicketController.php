@@ -2,64 +2,105 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ticket;
+use App\Models\Client;
+use App\Models\TicketMessage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TicketController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct()
+    {
+        $this->middleware('permission:view tickets')->only(['index', 'show']);
+        $this->middleware('permission:create tickets')->only(['create', 'store']);
+        $this->middleware('permission:edit tickets')->only(['edit', 'update']);
+        $this->middleware('permission:delete tickets')->only(['destroy']);
+    }
+
     public function index()
     {
-        $tickets = \App\Models\Ticket::with('cliente')->latest()->paginate(10);
+        $tickets = Ticket::with(['client', 'owner'])->latest()->paginate(15);
         return view('tickets.index', compact('tickets'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $clients = Client::orderBy('company')->get();
+        return view('tickets.create', compact('clients'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'client_id' => 'required|exists:clients,cli_id',
+            'subject' => 'required|string|max:255',
+            'description' => 'required|string',
+            'priority' => 'required|in:low,medium,high,critical',
+        ]);
+
+        $ticket = Ticket::create([
+            'client_id' => $validated['client_id'],
+            'user_id' => Auth::id(), // Assigned to the creator initially
+            'subject' => $validated['subject'],
+            'description' => $validated['description'],
+            'status' => 'new',
+            'priority' => $validated['priority'],
+        ]);
+
+        return redirect()->route('tickets.show', $ticket)
+            ->with('success', 'Ticket de soporte creado con éxito.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Ticket $ticket)
     {
-        //
+        $ticket->load(['client', 'owner', 'messages.user']);
+        return view('tickets.show', compact('ticket'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(Ticket $ticket)
     {
-        //
+        $clients = Client::orderBy('company')->get();
+        return view('tickets.edit', compact('ticket', 'clients'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Ticket $ticket)
     {
-        //
+        $validated = $request->validate([
+            'status' => 'required|in:new,open,pending,resolved,closed',
+            'priority' => 'required|in:low,medium,high,critical',
+            'user_id' => 'nullable|exists:users,id',
+        ]);
+
+        $ticket->update($validated);
+
+        return redirect()->route('tickets.show', $ticket)
+            ->with('success', 'Ticket actualizado con éxito.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function addMessage(Request $request, Ticket $ticket)
     {
-        //
+        $validated = $request->validate([
+            'message' => 'required|string',
+        ]);
+
+        TicketMessage::create([
+            'ticket_id' => $ticket->id,
+            'user_id' => Auth::id(),
+            'message' => $validated['message'],
+        ]);
+
+        // If ticket was new, mark as open
+        if ($ticket->status == 'new') {
+            $ticket->update(['status' => 'open']);
+        }
+
+        return redirect()->back()->with('success', 'Mensaje enviado.');
+    }
+
+    public function destroy(Ticket $ticket)
+    {
+        $ticket->delete();
+        return redirect()->route('tickets.index')->with('success', 'Ticket eliminado.');
     }
 }

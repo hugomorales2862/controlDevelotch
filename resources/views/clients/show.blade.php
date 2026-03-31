@@ -110,5 +110,42 @@
             </div>
         </div>
 
+        <!-- Contacts Section -->
+        <div class="bg-[#0f172a] rounded-2xl shadow-[0_0_20px_rgba(0,246,255,0.05)] border border-[#1e293b] overflow-hidden">
+            <div class="p-6 sm:p-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-white flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-[#00f6ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        Contactos
+                    </h3>
+                    <a href="{{ route('clients.contacts.index', $client) }}" class="text-sm font-medium text-[#00f6ff] hover:text-white transition-colors">Ver Todos</a>
+                </div>
+                @if($client->contacts->count() > 0)
+                    <div class="space-y-3">
+                        @foreach($client->contacts->take(3) as $contact)
+                            <div class="flex items-center justify-between p-4 bg-[#0B1120]/50 rounded-lg border border-[#1e293b]">
+                                <div>
+                                    <h4 class="font-medium text-white">{{ $contact->name }}</h4>
+                                    <p class="text-sm text-slate-400">{{ $contact->role ?: 'Sin cargo especificado' }}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm text-slate-300">{{ $contact->email ?: 'Sin email' }}</p>
+                                    <p class="text-xs text-slate-500">{{ $contact->phone ?: 'Sin teléfono' }}</p>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-8">
+                        <p class="text-slate-400 mb-4">No hay contactos registrados para este cliente.</p>
+                        <a href="{{ route('clients.contacts.create', $client) }}" class="inline-flex items-center px-4 py-2 bg-[#00f6ff] text-[#0B1120] font-bold text-sm rounded-lg hover:bg-white transition-colors">
+                            Agregar Primer Contacto
+                        </a>
+                    </div>
+                @endif
+            </div>
+        </div>
+
     </div>
-</x-app-layout>

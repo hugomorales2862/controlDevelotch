@@ -37,7 +37,7 @@
 
                         <div>
                             <label class="block font-medium text-xs text-slate-400 uppercase tracking-widest mb-1">Monto ($)</label>
-                            <input class="block w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-[#00f6ff] font-bold shadow-sm py-3 px-4" type="number" step="0.01" name="amount" :value="old('amount')" required />
+                            <input class="block w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-[#00f6ff] font-bold shadow-sm py-3 px-4" type="number" step="0.01" name="amount" value="{{ old('amount') }}" required />
                             <x-input-error :messages="$errors->get('amount')" class="mt-2 text-rose-400" />
                         </div>
 
@@ -54,7 +54,7 @@
 
                         <div>
                             <label class="block font-medium text-xs text-slate-400 uppercase tracking-widest mb-1">Fecha Contable</label>
-                            <input class="block w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white shadow-sm py-3 px-4" type="date" name="sale_date" :value="old('sale_date', date('Y-m-d'))" required />
+                            <input class="block w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white shadow-sm py-3 px-4" type="date" name="sale_date" value="{{ old('sale_date', date('Y-m-d')) }}" required />
                             <x-input-error :messages="$errors->get('sale_date')" class="mt-2 text-rose-400" />
                         </div>
                     </div>

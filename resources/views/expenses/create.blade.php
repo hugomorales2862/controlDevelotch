@@ -16,19 +16,19 @@
                         
                         <div class="md:col-span-2">
                             <label class="block font-medium text-xs text-slate-400 uppercase tracking-widest mb-1">Descripción del Gasto</label>
-                            <input class="block w-full bg-[#0B1120] border border-[#1e293b] focus:border-rose-400 focus:ring focus:ring-rose-400/20 rounded-xl text-white shadow-sm py-3 px-4" type="text" name="description" :value="old('description')" required autofocus placeholder="Ej: Pago de Servidores AWS" />
+                            <input class="block w-full bg-[#0B1120] border border-[#1e293b] focus:border-rose-400 focus:ring focus:ring-rose-400/20 rounded-xl text-white shadow-sm py-3 px-4" type="text" name="description" value="{{ old('description') }}" required autofocus placeholder="Ej: Pago de Servidores AWS" />
                             <x-input-error :messages="$errors->get('description')" class="mt-2 text-rose-400" />
                         </div>
 
                         <div>
                             <label class="block font-medium text-xs text-slate-400 uppercase tracking-widest mb-1">Monto del Egreso ($)</label>
-                            <input class="block w-full bg-[#0B1120] border border-[#1e293b] focus:border-rose-400 focus:ring focus:ring-rose-400/20 rounded-xl text-rose-400 font-bold shadow-sm py-3 px-4" type="number" step="0.01" name="amount" :value="old('amount')" required />
+                            <input class="block w-full bg-[#0B1120] border border-[#1e293b] focus:border-rose-400 focus:ring focus:ring-rose-400/20 rounded-xl text-rose-400 font-bold shadow-sm py-3 px-4" type="number" step="0.01" name="amount" value="{{ old('amount') }}" required />
                             <x-input-error :messages="$errors->get('amount')" class="mt-2 text-rose-400" />
                         </div>
 
                         <div>
                             <label class="block font-medium text-xs text-slate-400 uppercase tracking-widest mb-1">Fecha Contable</label>
-                            <input class="block w-full bg-[#0B1120] border border-[#1e293b] focus:border-rose-400 focus:ring focus:ring-rose-400/20 rounded-xl text-white shadow-sm py-3 px-4" type="date" name="expense_date" :value="old('expense_date', date('Y-m-d'))" required />
+                            <input class="block w-full bg-[#0B1120] border border-[#1e293b] focus:border-rose-400 focus:ring focus:ring-rose-400/20 rounded-xl text-white shadow-sm py-3 px-4" type="date" name="expense_date" value="{{ old('expense_date', date('Y-m-d')) }}" required />
                             <x-input-error :messages="$errors->get('expense_date')" class="mt-2 text-rose-400" />
                         </div>
                     </div>

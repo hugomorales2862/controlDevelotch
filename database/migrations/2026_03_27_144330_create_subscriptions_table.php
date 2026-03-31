@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('client_id')->constrained()->onDelete('cascade');
+            $table->foreignId('client_id')->constrained('clients', 'cli_id')->onDelete('cascade');
             $table->foreignId('service_id')->constrained()->onDelete('cascade');
+            $table->decimal('amount', 15, 2)->nullable();
+            $table->enum('billing_cycle', ['weekly', 'monthly', 'yearly', 'triennial'])->default('monthly');
             $table->string('status')->default('active');
             $table->date('start_date');
             $table->date('end_date')->nullable();

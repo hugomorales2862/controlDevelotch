@@ -47,11 +47,11 @@
                         <div class="grid grid-cols-2 gap-6">
                             <div>
                                 <label class="block font-medium text-xs text-slate-400 uppercase tracking-widest mb-1">Fecha de Inicio</label>
-                                <input class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white shadow-sm py-3 px-4" type="date" name="start_date" :value="old('start_date', date('Y-m-d'))" required />
+                                <input class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white shadow-sm py-3 px-4" type="date" name="start_date" value="{{ old('start_date', date('Y-m-d')) }}" required />
                             </div>
                             <div>
                                 <label class="block font-medium text-xs text-slate-400 uppercase tracking-widest mb-1">Fecha de Vencimiento</label>
-                                <input class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-rose-400 font-bold shadow-sm py-3 px-4" type="date" name="end_date" :value="old('end_date')" required />
+                                <input class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-rose-400 font-bold shadow-sm py-3 px-4" type="date" name="end_date" value="{{ old('end_date') }}" required />
                             </div>
                         </div>
                     </div>

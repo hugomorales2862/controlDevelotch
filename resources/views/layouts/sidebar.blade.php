@@ -98,7 +98,7 @@
         <div class="pt-4 pb-2">
             <p class="px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Comunicaciones</p>
         </div>
-        <x-sidebar-link :href="route('dashboard')" :active="false" icon="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v10a2 2 0 002 2z">
+        <x-sidebar-link :href="route('emails.create')" :active="request()->routeIs('emails.*')" icon="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v10a2 2 0 002 2z">
             Envío de Correos
         </x-sidebar-link>
     </nav>

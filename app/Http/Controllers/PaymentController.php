@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePaymentRequest;
 use App\Models\BankAccount;
 use App\Models\Invoice;
 use App\Models\PaymentReceipt;
@@ -32,17 +33,9 @@ class PaymentController extends Controller
         return view('payments.create', compact('invoices', 'bankAccounts'));
     }
 
-    public function store(Request $request)
+    public function store(StorePaymentRequest $request)
     {
-        $validated = $request->validate([
-            'invoice_id'      => 'required|exists:invoices,id',
-            'bank_account_id' => 'required|exists:bank_accounts,id',
-            'payment_method'  => 'required|in:efectivo,transferencia,cheque,tarjeta,otro',
-            'amount'          => 'required|numeric|min:0.01',
-            'paid_at'         => 'required|date',
-            'reference'       => 'nullable|string|max:100',
-            'subscription_id' => 'nullable|exists:subscriptions,id',
-        ]);
+        $validated = $request->validated();
 
         try {
             $result = $this->paymentService->process($validated);

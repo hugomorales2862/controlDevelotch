@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePettyCashRequest;
+use App\Http\Requests\UpdatePettyCashRequest;
 use App\Models\PettyCash;
+use App\Services\PettyCashService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PettyCashController extends Controller
 {
-    public function __construct()
+    protected PettyCashService $pettyCashService;
+
+    public function __construct(PettyCashService $pettyCashService)
     {
+        $this->pettyCashService = $pettyCashService;
         $this->middleware('permission:ver caja chica')->only(['index', 'show']);
         $this->middleware('permission:crear caja chica')->only(['create', 'store']);
         $this->middleware('permission:editar caja chica')->only(['edit', 'update']);
@@ -36,24 +42,21 @@ class PettyCashController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePettyCashRequest $request)
     {
-        $validated = $request->validate([
-            'amount' => 'required|numeric|min:0.01',
-            'type' => 'required|in:income,expense',
-            'category' => 'required|string|max:100',
-            'description' => 'required|string|max:255',
-            'transaction_date' => 'required|date',
-            'receipt_number' => 'nullable|string|max:50',
-            'notes' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         $validated['user_id'] = Auth::id();
+        $validated['purpose'] = $validated['description']; // Compatibility
 
-        PettyCash::create($validated);
-
-        return redirect()->route('petty-cash.index')
-            ->with('success', 'Petty cash transaction recorded successfully.');
+        try {
+            $this->pettyCashService->recordTransaction($validated);
+            return redirect()->route('petty-cash.index')
+                ->with('success', 'Petty cash transaction recorded successfully.');
+        } catch (\Throwable $e) {
+            report($e);
+            return back()->withInput()->with('error', 'Error recording transaction.');
+        }
     }
 
     /**
@@ -75,17 +78,9 @@ class PettyCashController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PettyCash $pettyCash)
+    public function update(UpdatePettyCashRequest $request, PettyCash $pettyCash)
     {
-        $validated = $request->validate([
-            'amount' => 'required|numeric|min:0.01',
-            'type' => 'required|in:income,expense',
-            'category' => 'required|string|max:100',
-            'description' => 'required|string|max:255',
-            'transaction_date' => 'required|date',
-            'receipt_number' => 'nullable|string|max:50',
-            'notes' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
 
         $pettyCash->update($validated);
 

@@ -12,7 +12,8 @@ class Quote extends Model
     use HasFactory, HasAuditLog;
 
     protected $fillable = [
-        'client_id',
+        'quoteable_id',
+        'quoteable_type',
         'user_id',
         'reference',
         'title',
@@ -30,9 +31,9 @@ class Quote extends Model
         'total' => 'decimal:2',
     ];
 
-    public function client()
+    public function quoteable()
     {
-        return $this->belongsTo(Client::class, 'client_id', 'cli_id');
+        return $this->morphTo();
     }
 
     public function user()

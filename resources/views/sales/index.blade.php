@@ -51,7 +51,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="text-sm font-black text-[#00f6ff] glow-cyan">${{ number_format($sale->amount, 2) }}</div>
+                                <div class="text-sm font-black text-[#00f6ff] glow-cyan">Q{{ number_format($sale->amount, 2) }}</div>
                             </td>
                             <td class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                                 {{ $sale->payment_method ?: 'Digital' }}

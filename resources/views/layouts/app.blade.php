@@ -109,6 +109,33 @@
                         });
                     });
                 });
+
+                document.querySelectorAll('.confirm-form').forEach(form => {
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        const title = this.dataset.title || '¿Estás seguro?';
+                        const text = this.dataset.text || 'Confirma para continuar con esta acción.';
+                        const icon = this.dataset.icon || 'question';
+                        const confirmText = this.dataset.confirmText || 'Sí, continuar';
+                        
+                        Swal.fire({
+                            title: title,
+                            text: text,
+                            icon: icon,
+                            showCancelButton: true,
+                            background: '#0f172a',
+                            color: '#fff',
+                            confirmButtonColor: '#00f6ff',
+                            cancelButtonColor: '#334155',
+                            confirmButtonText: confirmText,
+                            cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                form.submit();
+                            }
+                        });
+                    });
+                });
             });
         </script>
     </body>

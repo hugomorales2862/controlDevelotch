@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-2xl text-white tracking-tight glow-cyan">
-            {{ __('Gestionar Lead:') }} <span class="text-[#00f6ff]">{{ $prospect->company_name }}</span>
+            {{ __('Gestionar Prospecto:') }} <span class="text-[#00f6ff]">{{ $prospect->company_name }}</span>
         </h2>
     </x-slot>
 
@@ -55,10 +55,10 @@
 
                         <!-- Status -->
                         <div>
-                            <label for="status" class="block font-semibold text-xs text-slate-400 uppercase tracking-widest mb-2">Estado del Lead</label>
+                            <label for="status" class="block font-semibold text-xs text-slate-400 uppercase tracking-widest mb-2">Estado del Prospecto</label>
                             <select id="status" name="status" required
                                     class="block w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white py-4 px-5 shadow-sm transition-all">
-                                <option value="new" {{ old('status', $prospect->status) == 'new' ? 'selected' : '' }}>Nuevo Lead</option>
+                                <option value="new" {{ old('status', $prospect->status) == 'new' ? 'selected' : '' }}>Nuevo Prospecto</option>
                                 <option value="contacted" {{ old('status', $prospect->status) == 'contacted' ? 'selected' : '' }}>Contactado</option>
                                 <option value="qualified" {{ old('status', $prospect->status) == 'qualified' ? 'selected' : '' }}>Calificado</option>
                                 <option value="proposal" {{ old('status', $prospect->status) == 'proposal' ? 'selected' : '' }}>En Propuesta</option>
@@ -109,7 +109,7 @@
                         <button type="submit" 
                                 class="inline-flex items-center px-10 py-4 bg-[#0B1120] border border-[#00f6ff] rounded-2xl font-black text-xs text-[#00f6ff] uppercase tracking-tighter transition-all duration-500 shadow-[0_0_25px_rgba(0,246,255,0.1)] hover:bg-[#00f6ff] hover:text-[#0B1120] hover:scale-105">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                            Actualizar Lead
+                            Actualizar Prospecto
                         </button>
                     </div>
                 </form>

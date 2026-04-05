@@ -16,7 +16,7 @@
                     <select name="client_id" class="block w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-[#00f6ff] font-bold shadow-sm py-2 px-3 text-sm">
                         <option value="" class="bg-[#0B1120]">-- Todos los Clientes (Reporte Global) --</option>
                         @foreach($clients as $c)
-                            <option value="{{ $c->id }}" class="bg-[#0B1120]" {{ $clientId == $c->id ? 'selected' : '' }}>{{ $c->name }}</option>
+                            <option value="{{ $c->cli_id }}" class="bg-[#0B1120]" {{ $clientId == $c->cli_id ? 'selected' : '' }}>{{ $c->name }}</option>
                         @endforeach
                     </select>
                 </div>

@@ -94,7 +94,7 @@
                                     </div>
                                     <div class="md:col-span-1">
                                         <div class="text-right text-xs font-black text-slate-400 mb-2">
-                                            $<span x-text="(item.quantity * item.unit_price).toFixed(2)"></span>
+                                            Q<span x-text="(item.quantity * item.unit_price).toFixed(2)"></span>
                                         </div>
                                     </div>
                                     <div class="md:col-span-1 flex justify-center pb-2">
@@ -116,7 +116,7 @@
                         <div class="space-y-4">
                             <div class="flex justify-between items-center text-slate-400">
                                 <span class="text-xs uppercase font-bold tracking-tighter">Sub-Total</span>
-                                <span class="text-white font-black">$<span x-text="subtotal.toFixed(2)"></span></span>
+                                <span class="text-white font-black">Q<span x-text="subtotal.toFixed(2)"></span></span>
                             </div>
 
                             <div>
@@ -129,7 +129,7 @@
 
                             <div>
                                 <label class="flex justify-between items-center text-slate-400 mb-2">
-                                    <span class="text-xs uppercase font-bold tracking-tighter">Descuento ($)</span>
+                                    <span class="text-xs uppercase font-bold tracking-tighter">Descuento (Q)</span>
                                     <input type="number" step="0.01" name="discount" x-model.number="discount" 
                                            class="w-20 bg-[#0B1120] border-white/10 rounded-lg text-white text-[10px] text-right py-1 px-2">
                                 </label>
@@ -140,7 +140,7 @@
                                     <span class="text-xs uppercase font-black text-slate-500 mb-2">Nuevo Total</span>
                                     <div class="text-center">
                                         <div class="text-4xl font-black text-[#00f6ff] tracking-tighter italic glow-cyan">
-                                            $<span x-text="total.toFixed(2)"></span>
+                                            Q<span x-text="total.toFixed(2)"></span>
                                         </div>
                                     </div>
                                 </div>

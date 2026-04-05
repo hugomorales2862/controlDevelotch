@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\HasAuditLog;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 
 class Invoice extends Model
 {
+    use HasAuditLog;
     use HasFactory;
 
     protected $fillable = [

@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Quote;
 use App\Models\Client;
+use App\Models\Prospect;
 use App\Models\Service;
 use App\Models\QuoteItem;
 use App\Notifications\QuoteSent;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -27,18 +29,31 @@ class QuoteController extends Controller
      */
     public function index()
     {
-        $quotes = Quote::with(['client', 'user'])->orderBy('created_at', 'desc')->paginate(15);
+        // Auto-expire quotes that have passed their valid_until date
+        Quote::where('status', '!=', 'expired')
+            ->where('valid_until', '<', now()->toDateString())
+            ->whereIn('status', ['draft', 'sent'])
+            ->update(['status' => 'expired']);
+
+        $quotes = Quote::with(['quoteable', 'user'])->orderBy('created_at', 'desc')->paginate(15);
         return view('quotes.index', compact('quotes'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         $clients = Client::orderBy('company')->get();
+        $prospects = Prospect::orderBy('company_name')->get();
         $services = Service::orderBy('name')->get();
-        return view('quotes.create', compact('clients', 'services'));
+
+        $initialQuoteable = null;
+        if ($request->has(['quoteable_type', 'quoteable_id'])) {
+            $initialQuoteable = $request->quoteable_type . '|' . $request->quoteable_id;
+        }
+
+        return view('quotes.create', compact('clients', 'prospects', 'services', 'initialQuoteable'));
     }
 
     /**
@@ -47,7 +62,8 @@ class QuoteController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'client_id' => 'required|exists:clients,cli_id',
+            'quoteable_type' => 'required|string|in:App\Models\Client,App\Models\Prospect',
+            'quoteable_id' => 'required|integer',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'valid_until' => 'required|date|after:today',
@@ -61,7 +77,8 @@ class QuoteController extends Controller
 
         DB::transaction(function () use ($validated) {
             $quote = Quote::create([
-                'client_id' => $validated['client_id'],
+                'quoteable_type' => $validated['quoteable_type'],
+                'quoteable_id' => $validated['quoteable_id'],
                 'user_id' => Auth::id(),
                 'reference' => 'QT-' . strtoupper(uniqid()),
                 'title' => $validated['title'],
@@ -94,7 +111,7 @@ class QuoteController extends Controller
      */
     public function show(Quote $quote)
     {
-        $quote->load(['client', 'user', 'items.service']);
+        $quote->load(['quoteable', 'user', 'items.service']);
         return view('quotes.show', compact('quote'));
     }
 
@@ -104,9 +121,10 @@ class QuoteController extends Controller
     public function edit(Quote $quote)
     {
         $clients = Client::orderBy('company')->get();
+        $prospects = Prospect::orderBy('company_name')->get();
         $services = Service::orderBy('name')->get();
         $quote->load('items.service');
-        return view('quotes.edit', compact('quote', 'clients', 'services'));
+        return view('quotes.edit', compact('quote', 'clients', 'prospects', 'services'));
     }
 
     /**
@@ -115,14 +133,15 @@ class QuoteController extends Controller
     public function update(Request $request, Quote $quote)
     {
         $validated = $request->validate([
-            'client_id' => 'required|exists:clients,id',
+            'quoteable_type' => 'required|string|in:App\Models\Client,App\Models\Prospect',
+            'quoteable_id' => 'required|integer',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'valid_until' => 'required|date',
             'status' => 'required|in:draft,sent,approved,rejected,expired',
             'notes' => 'nullable|string',
             'items' => 'required|array|min:1',
-            'items.*.service_id' => 'required|exists:services,id',
+            'items.*.service_id' => 'nullable|exists:services,id',
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.unit_price' => 'required|numeric|min:0',
             'items.*.description' => 'nullable|string',
@@ -130,7 +149,8 @@ class QuoteController extends Controller
 
         DB::transaction(function () use ($validated, $quote) {
             $quote->update([
-                'client_id' => $validated['client_id'],
+                'quoteable_type' => $validated['quoteable_type'],
+                'quoteable_id' => $validated['quoteable_id'],
                 'title' => $validated['title'],
                 'description' => $validated['description'],
                 'valid_until' => $validated['valid_until'],
@@ -175,20 +195,47 @@ class QuoteController extends Controller
      */
     public function send(Quote $quote)
     {
+        // Marcar como enviada primero (independiente del correo)
+        $quote->load('items.service', 'quoteable');
         $quote->update(['status' => 'sent']);
 
+        $emailSent = false;
+
         try {
-            if ($quote->client?->email) {
-                $quote->client->notify(new QuoteSent($quote));
+            if ($quote->quoteable && method_exists($quote->quoteable, 'notify') && $quote->quoteable->email) {
+                // Generar PDF adjunto
+                $pdf = Pdf::loadView('quotes.pdf', compact('quote'))
+                    ->setPaper('letter', 'portrait');
+                $pdfContent = $pdf->output();
+                $filename = "Cotizacion-{$quote->reference}.pdf";
+
+                $quote->quoteable->notify(new QuoteSent($quote, $pdfContent, $filename));
+                $emailSent = true;
             }
         } catch (\Throwable $e) {
             report($e);
+        }
+
+        if ($emailSent) {
             return redirect()->back()
-                ->with('error', 'No fue posible enviar el correo de cotización. Verifica la configuración de correo.');
+                ->with('success', 'Cotización enviada. El PDF fue adjuntado al correo del destinatario.');
         }
 
         return redirect()->back()
-            ->with('success', 'Cotización enviada al cliente correctamente.');
+            ->with('success', 'Cotización marcada como enviada. (El correo no pudo ser entregado — verifique la config SMTP).');
+    }
+
+    /**
+     * Download quote as PDF.
+     */
+    public function pdf(Quote $quote)
+    {
+        $quote->load('items.service', 'quoteable');
+
+        $pdf = Pdf::loadView('quotes.pdf', compact('quote'))
+            ->setPaper('letter', 'portrait');
+
+        return $pdf->download("Cotizacion-{$quote->reference}.pdf");
     }
 
     /**
@@ -198,8 +245,17 @@ class QuoteController extends Controller
     {
         $quote->update(['status' => 'approved']);
 
+        // Si el destinatario es un Prospecto, convertirlo automáticamente a Cliente al ganar la cotización
+        if ($quote->quoteable_type === \App\Models\Prospect::class) {
+            $prospect = $quote->quoteable;
+            if ($prospect && $prospect->status !== 'converted') {
+                $client = $prospect->toClient();
+                // Opcional: El método toClient ya actualiza las cotizaciones asociadas.
+            }
+        }
+
         return redirect()->back()
-            ->with('success', 'Quote approved successfully.');
+            ->with('success', 'Cotización aprobada correctamente. El prospecto ha sido promovido a Cliente.');
     }
 
     /**

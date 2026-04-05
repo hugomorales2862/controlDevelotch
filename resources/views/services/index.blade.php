@@ -18,7 +18,7 @@
                 <div class="p-6 flex-1 flex flex-col z-10">
                     <h3 class="text-xl font-bold text-white mb-2">{{ $service->name }}</h3>
                     <div class="flex items-baseline mb-6 border-b border-[#1e293b] pb-4">
-                        <span class="text-3xl font-black text-[#00f6ff] glow-cyan">${{ number_format($service->price, 2) }}</span>
+                        <span class="text-3xl font-black text-[#00f6ff] glow-cyan">Q{{ number_format($service->price, 2) }}</span>
                         <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-2">/ {{ $service->duration_days }} días</span>
                     </div>
                     

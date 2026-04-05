@@ -17,6 +17,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\BankAccountController;
 use App\Http\Controllers\PettyCashController;
 use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\EmailController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -40,6 +41,7 @@ Route::middleware(['auth', 'verified', 'role:admin|staff'])->group(function () {
     Route::post('quotes/{quote}/send', [QuoteController::class, 'send'])->name('quotes.send');
     Route::post('quotes/{quote}/approve', [QuoteController::class, 'approve'])->name('quotes.approve');
     Route::post('quotes/{quote}/reject', [QuoteController::class, 'reject'])->name('quotes.reject');
+    Route::get('quotes/{quote}/pdf', [QuoteController::class, 'pdf'])->name('quotes.pdf');
     
     // Operations Module
     Route::resource('projects', ProjectController::class);
@@ -78,6 +80,9 @@ Route::middleware(['auth', 'verified', 'role:admin|staff'])->group(function () {
     
     // Audit Module
     Route::resource('audit-logs', AuditLogController::class)->only(['index', 'show']);
+    
+    // Emails Module
+    Route::resource('emails', EmailController::class)->only(['create', 'store', 'index']);
     
     Route::get('/reports', [App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
 });

@@ -71,6 +71,19 @@ class PaymentService
                 'user_id'        => Auth::id(),
                 'notas'          => "Método: {$data['payment_method']} | Ref: " . ($data['reference'] ?? 'N/A'),
             ]);
+            
+            // Integración para el módulo PettyCash
+            $pettyCashService = app(PettyCashService::class);
+            $pettyCashService->recordTransaction([
+                'user_id'          => Auth::id(),
+                'amount'           => $data['amount'],
+                'type'             => 'income',
+                'category'         => 'Pagos',
+                'description'      => $concepto,
+                'transaction_date' => now()->toDateString(),
+                'purpose'          => 'Pago Factura',
+            ]);
+
 
             // ── 4. Generar Comprobante de Pago ───────────────────────────────
             $receipt = PaymentReceipt::create([
@@ -91,6 +104,14 @@ class PaymentService
                     'saldo_caja_nuevo'  => $cashbox->saldo_nuevo,
                 ],
             ]);
+
+            // Dispatch automatic email
+            if ($invoice->client && $invoice->client->email) {
+                $mailService = app(\App\Services\MailService::class);
+                $mensaje = "Hola {$invoice->client->name},\n\nLe informamos que hemos recibido su pago por {$data['amount']} para la factura {$invoice->number}.\nSu comprobante de pago #{$receipt->number} ha sido generado exitosamente.\n\nGracias por su preferencia.";
+                $mailable = new \App\Mail\GenericNotification('Confirmación de Pago Recibido', $mensaje);
+                $mailService->sendSafe($invoice->client->email, $mailable);
+            }
 
             return [
                 'payment' => $payment,

@@ -19,7 +19,7 @@
                         <tr>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Prospecto</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Contacto</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Estado</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Estado del Prospecto</th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Industria</th>
                             <th class="px-6 py-4 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Acciones</th>
                         </tr>
@@ -45,10 +45,18 @@
                                             'lost' => 'bg-rose-500/10 text-rose-400 border-rose-500/20',
                                             'won' => 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
                                         ];
+                                        $statusLabels = [
+                                            'new' => 'Nuevo Prospecto',
+                                            'contacted' => 'Contactado',
+                                            'qualified' => 'Calificado',
+                                            'proposal' => 'Propuesta',
+                                            'lost' => 'Perdido',
+                                            'won' => 'Convertido',
+                                        ];
                                         $statusColor = $statusStyles[$prospect->status] ?? $statusStyles['new'];
                                     @endphp
                                     <span class="px-2 py-0.5 text-[9px] uppercase font-bold tracking-wider rounded border {{ $statusColor }}">
-                                        {{ $prospect->status }}
+                                        {{ $statusLabels[$prospect->status] ?? $prospect->status }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">

@@ -11,11 +11,6 @@
     </x-slot>
 
     <div class="max-w-3xl mx-auto">
-        @if(session('success'))
-            <div class="mb-4 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 text-sm">
-                {{ session('success') }}
-            </div>
-        @endif
 
         <div class="bg-[#0f172a] rounded-2xl shadow-[0_0_20px_rgba(0,246,255,0.05)] border border-[#1e293b] overflow-hidden">
             <div class="p-8">

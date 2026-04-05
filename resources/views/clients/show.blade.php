@@ -6,7 +6,7 @@
             </h2>
             <div class="space-x-2 flex items-center">
                 <a href="{{ route('clients.index') }}" class="text-sm font-medium text-slate-400 hover:text-white bg-[#0f172a] border border-[#1e293b] px-4 py-2 rounded-lg transition-colors">Volver</a>
-                <a href="{{ route('reports.index', ['client_id' => $client->id]) }}" class="text-sm font-bold text-[#0B1120] bg-emerald-400 hover:bg-emerald-300 border border-transparent px-4 py-2 rounded-lg shadow-[0_0_15px_rgba(52,211,153,0.3)] transition-all flex items-center">
+                <a href="{{ route('reports.index', ['client_id' => $client->cli_id]) }}" class="text-sm font-bold text-[#0B1120] bg-emerald-400 hover:bg-emerald-300 border border-transparent px-4 py-2 rounded-lg shadow-[0_0_15px_rgba(52,211,153,0.3)] transition-all flex items-center">
                     <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     Historial de Pagos
                 </a>
@@ -98,7 +98,7 @@
                                 <p class="text-xs text-slate-400 mt-1">{{ \Carbon\Carbon::parse($sale->sale_date)->format('d M, Y') }} &middot; <span class="text-slate-500 font-medium">{{ $sale->payment_method ?: 'Digital' }}</span></p>
                             </div>
                             <span class="font-black text-[#00f6ff]">
-                                ${{ number_format($sale->amount, 2) }}
+                                Q{{ number_format($sale->amount, 2) }}
                             </span>
                         </div>
                     @empty
@@ -149,3 +149,4 @@
         </div>
 
     </div>
+</x-app-layout>

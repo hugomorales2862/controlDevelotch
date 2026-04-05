@@ -55,7 +55,16 @@ class ProspectController extends Controller
 
         $validated['created_by'] = Auth::id();
 
-        Prospect::create($validated);
+        $prospect = Prospect::create($validated);
+        $prospect->load('creator'); 
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'prospect' => $prospect,
+                'identifier' => "App\Models\Prospect|{$prospect->id}"
+            ], 201);
+        }
 
         return redirect()->route('prospects.index')
             ->with('success', 'Prospect created successfully.');
@@ -113,22 +122,12 @@ class ProspectController extends Controller
             ->with('success', 'Prospect deleted successfully.');
     }
 
-    /**
-     * Convert prospect to client.
-     */
     public function convertToClient(Prospect $prospect)
     {
-        $client = Client::create([
-            'name' => $prospect->contact_name,
-            'company' => $prospect->company_name,
-            'email' => $prospect->email,
-            'phone' => $prospect->phone,
-            'contact_name' => $prospect->contact_name, // redundant but kept for safety if model uses it
-        ]);
-
-        $prospect->update(['status' => 'won']);
+        // Usa la lógica del modelo para migrar datos y cotizaciones
+        $client = $prospect->toClient();
 
         return redirect()->route('clients.show', $client)
-            ->with('success', '¡Prospecto convertido a Cliente con éxito!');
+            ->with('success', '¡Prospecto convertido a Cliente con éxito! Se han transferido sus cotizaciones si existían.');
     }
 }

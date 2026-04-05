@@ -36,7 +36,7 @@
                                 <div class="text-sm font-bold text-white">{{ $expense->description }}</div>
                             </td>
                             <td class="px-6 py-4">
-                                <div class="text-sm font-black text-rose-400">-${{ number_format($expense->amount, 2) }}</div>
+                                <div class="text-sm font-black text-rose-400">-Q{{ number_format($expense->amount, 2) }}</div>
                             </td>
                             <td class="px-6 py-4 text-center text-sm font-medium">
                                 <div class="flex items-center justify-center space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">

@@ -42,7 +42,7 @@ class Client extends Model
 
     public function quotes()
     {
-        return $this->hasMany(Quote::class, 'client_id', 'cli_id');
+        return $this->morphMany(Quote::class, 'quoteable');
     }
 
     public function projects()

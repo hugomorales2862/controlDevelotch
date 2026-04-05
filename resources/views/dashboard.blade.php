@@ -34,7 +34,7 @@
                 </div>
                 <h3 class="text-sm font-medium text-slate-400 tracking-wider uppercase mb-1">Margen del Mes</h3>
                 <p class="text-3xl font-black {{ $netIncome >= 0 ? 'text-emerald-400' : 'text-rose-400' }}">
-                    ${{ number_format($netIncome, 2) }}
+                    Q{{ number_format($netIncome, 2) }}
                 </p>
             </div>
             
@@ -44,7 +44,7 @@
                     <svg class="w-16 h-16 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                 </div>
                 <h3 class="text-sm font-medium text-slate-400 tracking-wider uppercase mb-1">Ingresos del Mes</h3>
-                <p class="text-3xl font-black text-white glow-cyan">${{ number_format($currentMonthSales, 2) }}</p>
+                <p class="text-3xl font-black text-white glow-cyan">Q{{ number_format($currentMonthSales, 2) }}</p>
             </div>
         </div>
 
@@ -136,7 +136,7 @@
                 data: {
                     labels: {!! json_encode(array_reverse($months)) !!},
                     datasets: [{
-                        label: 'Ingresos ($)',
+                        label: 'Ingresos (Q)',
                         data: {!! json_encode(array_reverse($salesData)) !!},
                         borderColor: '#00f6ff',
                         backgroundColor: gradient,
@@ -158,7 +158,7 @@
                         y: { 
                             beginAtZero: true, 
                             grid: { color: '#1e293b', drawBorder: false },
-                            ticks: { callback: function(value) { return '$' + value; } }
+                            ticks: { callback: function(value) { return 'Q' + value; } }
                         },
                         x: { grid: { display: false, drawBorder: false } }
                     }
@@ -172,7 +172,7 @@
                 data: {
                     labels: {!! json_encode($serviceLabels) !!},
                     datasets: [{
-                        label: 'Total Vendido ($)',
+                        label: 'Total Vendido (Q)',
                         data: {!! json_encode($serviceTotals) !!},
                         backgroundColor: '#3b82f6',
                         hoverBackgroundColor: '#00f6ff',

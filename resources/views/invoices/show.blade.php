@@ -44,8 +44,8 @@
                                 <tr class="border-t border-[#1e293b]">
                                     <td class="px-4 py-2">{{ $item['description'] ?? '-' }}</td>
                                     <td class="px-4 py-2">{{ $item['quantity'] ?? 0 }}</td>
-                                    <td class="px-4 py-2">{{ number_format($item['unit_price'] ?? 0, 2) }}</td>
-                                    <td class="px-4 py-2">{{ number_format(($item['quantity'] ?? 0) * ($item['unit_price'] ?? 0), 2) }}</td>
+                                    <td class="px-4 py-2">Q{{ number_format($item['unit_price'] ?? 0, 2) }}</td>
+                                    <td class="px-4 py-2">Q{{ number_format(($item['quantity'] ?? 0) * ($item['unit_price'] ?? 0), 2) }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

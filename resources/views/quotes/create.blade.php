@@ -5,54 +5,94 @@
         </h2>
     </x-slot>
 
-    <div class="max-w-6xl mx-auto py-8 px-4" x-data="quoteForm()">
+    <div class="max-w-6xl mx-auto py-8 px-4" x-data="quoteForm('{{ addslashes($initialQuoteable) }}')">
         <form method="POST" action="{{ route('quotes.store') }}" class="space-y-8">
             @csrf
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Main Data -->
                 <div class="lg:col-span-2 space-y-6">
-                    <div class="bg-[#0f172a] rounded-2xl border border-[#1e293b] p-8 shadow-xl">
+                    <div class="bg-[#0f172a] rounded-2xl border border-[#1e293b] p-8 shadow-xl relative overflow-hidden">
+                        <!-- Decorative background element -->
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-[#00f6ff]/5 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+                        
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                            <!-- Title -->
+                            <!-- Entidad Destino -->
                             <div class="md:col-span-2">
-                                <label for="title" class="block font-semibold text-xs text-slate-400 uppercase tracking-widest mb-2">Título de la Propuesta</label>
-                                <input id="title" name="title" type="text" value="{{ old('title') }}" required autofocus
-                                       class="block w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white py-4 px-5 shadow-sm transition-all"
-                                       placeholder="Ej: Servicios Mensuales de Infraestructura Cloud">
-                                <x-input-error :messages="$errors->get('title')" class="mt-2 text-rose-400" />
+                                <div class="flex justify-between items-end mb-2">
+                                    <label class="block font-semibold text-xs text-slate-400 uppercase tracking-widest italic">Cliente o Prospecto Destinatario</label>
+                                    <button type="button" @click="showModal = true" class="text-[10px] font-black text-[#00f6ff] hover:text-white uppercase tracking-tighter transition-colors">
+                                        + Registrar Nuevo Prospecto
+                                    </button>
+                                </div>
+                                <select x-model="selectedIdentifier" @change="updateQuoteable($event.target.value)" required
+                                        class="block w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white py-4 px-5 transition-all shadow-inner">
+                                    <option value="">-- Seleccionar Destinatario --</option>
+                                    <optgroup label="Prospectos (Posibles Clientes)" class="bg-[#1e293b]">
+                                        @foreach($prospects as $prospect)
+                                            <option value="App\Models\Prospect|{{ $prospect->id }}" 
+                                                    data-name="{{ $prospect->company_name ?: $prospect->contact_name }}"
+                                                    data-company="{{ $prospect->company_name }}"
+                                                    data-email="{{ $prospect->email }}">
+                                                {{ $prospect->company_name ?: $prospect->contact_name }} (Prospecto)
+                                            </option>
+                                        @endforeach
+                                    </optgroup>
+                                    <optgroup label="Clientes Activos" class="bg-[#1e293b]">
+                                        @foreach($clients as $client)
+                                            <option value="App\Models\Client|{{ $client->cli_id }}"
+                                                    data-name="{{ $client->name }}"
+                                                    data-company="{{ $client->company }}"
+                                                    data-email="{{ $client->email }}">
+                                                {{ $client->name }} (Cliente)
+                                            </option>
+                                        @endforeach
+                                    </optgroup>
+                                </select>
+                                <input type="hidden" name="quoteable_type" x-model="quoteable_type">
+                                <input type="hidden" name="quoteable_id" x-model="quoteable_id">
+                                
+                                <!-- Loaded Entity Info Panel -->
+                                <template x-if="quoteable_id">
+                                    <div class="mt-4 p-4 bg-[#0B1120]/80 border border-[#00f6ff]/20 rounded-xl flex items-center justify-between animate-fadeIn">
+                                        <div class="flex items-center">
+                                            <div class="w-10 h-10 rounded-lg bg-[#00f6ff]/10 flex items-center justify-center text-[#00f6ff] mr-4 border border-[#00f6ff]/20">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v11m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs font-black text-white uppercase tracking-widest" x-text="loadedEntity.name"></p>
+                                                <p class="text-[10px] text-slate-500" x-text="loadedEntity.email"></p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <span class="text-[9px] font-black p-1 bg-[#00f6ff]/10 text-[#00f6ff] rounded border border-[#00f6ff]/20 uppercase tracking-tighter" x-text="quoteable_type.split('\\').pop()"></span>
+                                        </div>
+                                    </div>
+                                </template>
                             </div>
 
-                            <!-- Client -->
-                            <div>
-                                <label for="client_id" class="block font-semibold text-xs text-slate-400 uppercase tracking-widest mb-2">Cliente Destinatario</label>
-                                <select id="client_id" name="client_id" required
-                                        class="block w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white py-4 px-5 transition-all">
-                                    <option value="">-- Seleccionar Cliente --</option>
-                                    @foreach($clients as $client)
-                                        <option value="{{ $client->cli_id }}" {{ old('client_id') == $client->cli_id ? 'selected' : '' }}>
-                                            {{ $client->name }} ({{ $client->company }})
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <x-input-error :messages="$errors->get('client_id')" class="mt-2 text-rose-400" />
+                            <!-- Title -->
+                            <div class="md:col-span-2">
+                                <label for="title" class="block font-semibold text-xs text-slate-400 uppercase tracking-widest mb-2 italic">Título de la Propuesta</label>
+                                <input id="title" name="title" type="text" x-model="quote_title" required
+                                       class="block w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white py-4 px-5 shadow-sm transition-all"
+                                       placeholder="Ej: Servicios Mensuales de Infraestructura Cloud">
                             </div>
 
                             <!-- Valid Until -->
-                            <div>
-                                <label for="valid_until" class="block font-semibold text-xs text-slate-400 uppercase tracking-widest mb-2">Válida Hasta</label>
+                            <div class="md:col-span-2">
+                                <label for="valid_until" class="block font-semibold text-xs text-slate-400 uppercase tracking-widest mb-2 italic">Fecha Límite de Validez</label>
                                 <input id="valid_until" name="valid_until" type="date" value="{{ old('valid_until', date('Y-m-d', strtotime('+30 days'))) }}" required
                                        class="block w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-rose-400 font-bold py-4 px-5 transition-all">
-                                <x-input-error :messages="$errors->get('valid_until')" class="mt-2 text-rose-400" />
                             </div>
                         </div>
 
                         <!-- Description -->
                         <div class="mb-4">
-                            <label for="description" class="block font-semibold text-xs text-slate-400 uppercase tracking-widest mb-2">Introducción / Alcance de la Cotización</label>
+                            <label for="description" class="block font-semibold text-xs text-slate-400 uppercase tracking-widest mb-2 italic">Introducción / Alcance</label>
                             <textarea id="description" name="description" rows="3" 
-                                      class="block w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-slate-300 py-4 px-5 transition-all">{{ old('description') }}</textarea>
-                            <x-input-error :messages="$errors->get('description')" class="mt-2 text-rose-400" />
+                                      class="block w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-slate-300 py-4 px-5 transition-all"
+                                      placeholder="Describe brevemente el objetivo de esta propuesta comercial..."></textarea>
                         </div>
                     </div>
 
@@ -100,13 +140,13 @@
                                             </td>
                                             <td class="px-4 py-4 w-28">
                                                 <div class="relative">
-                                                    <span class="absolute left-2 top-2 text-slate-500 text-[10px] font-black">$</span>
+                                                    <span class="absolute left-2 top-2 text-slate-500 text-[10px] font-black">Q</span>
                                                     <input type="number" :name="`items[${index}][unit_price]`" x-model.number="item.unit_price" step="0.01"
                                                            class="block w-full bg-[#0B1120] border-[#1e293b] rounded-lg text-xs text-right text-[#00f6ff] pl-5 p-2 font-bold">
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4 text-right">
-                                                <span class="text-xs font-black text-white" x-text="'$' + (item.quantity * item.unit_price).toFixed(2)"></span>
+                                                <span class="text-xs font-black text-white" x-text="'Q' + (item.quantity * item.unit_price).toFixed(2)"></span>
                                             </td>
                                             <td class="px-4 py-4 text-center">
                                                 <button type="button" @click="removeItem(index)" class="text-rose-500 hover:text-rose-400">
@@ -129,15 +169,15 @@
                         <div class="space-y-4 mb-8">
                             <div class="flex justify-between items-center text-sm">
                                 <span class="text-slate-500 font-medium tracking-tight">Subtotal General</span>
-                                <span class="text-white font-bold" x-text="'$' + calculateTotal().toFixed(2)"></span>
+                                <span class="text-white font-bold" x-text="'Q' + calculateTotal().toFixed(2)"></span>
                             </div>
                             <div class="flex justify-between items-center text-sm">
                                 <span class="text-slate-500 font-medium tracking-tight">Impuestos (Incl.)</span>
-                                <span class="text-slate-400 font-medium italic">$0.00</span>
+                                <span class="text-slate-400 font-medium italic">Q0.00</span>
                             </div>
                             <div class="flex justify-between items-center pt-4 border-t border-white/10">
                                 <span class="text-[10px] font-black p-1 bg-amber-500/10 text-amber-500 rounded uppercase tracking-tighter">Total Cotizado</span>
-                                <span class="text-2xl font-black text-[#00f6ff] glow-cyan" x-text="'$' + calculateTotal().toFixed(2)"></span>
+                                <span class="text-2xl font-black text-[#00f6ff] glow-cyan" x-text="'Q' + calculateTotal().toFixed(2)"></span>
                             </div>
                         </div>
 
@@ -157,14 +197,144 @@
                 </div>
             </div>
         </form>
+
+        <!-- Quick Prospect Modal -->
+        <div x-show="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" x-cloak>
+            <div @click.away="showModal = false" class="bg-[#0f172a] border border-[#1e293b] rounded-3xl w-full max-w-md shadow-2xl overflow-hidden scale-in">
+                <div class="p-6 border-b border-[#1e293b] bg-gradient-to-r from-[#0f172a] to-[#1e293b] flex justify-between items-center">
+                    <h3 class="text-white font-black uppercase text-xs tracking-widest">Registro Rápido de Prospecto</h3>
+                    <button @click="showModal = false" class="text-slate-500 hover:text-white">&times;</button>
+                </div>
+                <div class="p-8 space-y-6">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Empresa / Razón Social</label>
+                        <input type="text" x-model="quickProspect.company_name" class="w-full bg-[#0B1120] border-[#1e293b] rounded-xl text-white text-sm py-3 px-4 focus:border-[#00f6ff] transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Nombre del Contacto</label>
+                        <input type="text" x-model="quickProspect.contact_name" class="w-full bg-[#0B1120] border-[#1e293b] rounded-xl text-white text-sm py-3 px-4 focus:border-[#00f6ff] transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Email Principal</label>
+                        <input type="email" x-model="quickProspect.email" class="w-full bg-[#0B1120] border-[#1e293b] rounded-xl text-white text-sm py-3 px-4 focus:border-[#00f6ff] transition-all">
+                    </div>
+                    <div x-show="errorMessage" class="p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg">
+                        <p class="text-[10px] text-rose-500 text-center font-bold italic" x-text="errorMessage"></p>
+                    </div>
+                    <button type="button" @click="saveQuickProspect()" 
+                            class="w-full py-4 bg-[#00f6ff] text-[#0B1120] font-black uppercase text-xs rounded-xl hover:bg-white transition-all">
+                        Cargar y Guardar Prospecto
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <style>
+        [x-cloak] { display: none !important; }
+        .scale-in { animation: scaleIn 0.3s ease-out; }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+
     <script>
-        function quoteForm() {
+        function quoteForm(initialValue = '') {
             return {
+                selectedIdentifier: initialValue,
+                quoteable_type: initialValue ? initialValue.split('|')[0] : '',
+                quoteable_id: initialValue ? initialValue.split('|')[1] : '',
+                quote_title: '',
                 items: [
                     { service_id: '', description: '', quantity: 1, unit_price: 0.00 }
                 ],
+                showModal: false,
+                errorMessage: '',
+                quickProspect: {
+                    company_name: '',
+                    contact_name: '',
+                    email: '',
+                    status: 'new'
+                },
+                loadedEntity: {
+                    name: '',
+                    email: '',
+                    company: ''
+                },
+                init() {
+                    if (this.selectedIdentifier) {
+                        this.$nextTick(() => this.updateQuoteable(this.selectedIdentifier));
+                    }
+                },
+                updateQuoteable(value) {
+                    if (value) {
+                        const parts = value.split('|');
+                        this.quoteable_type = parts[0];
+                        this.quoteable_id = parts[1];
+                        
+                        // Cargar datos del DOM (desde los atributos data)
+                        const select = document.querySelector('select[x-model="selectedIdentifier"]');
+                        const option = select.querySelector(`option[value="${CSS.escape(value)}"]`);
+                        if (option) {
+                            this.loadedEntity.name = option.dataset.name;
+                            this.loadedEntity.email = option.dataset.email;
+                            this.loadedEntity.company = option.dataset.company;
+                            
+                            // Autocompletar título si está vacío
+                            if (this.quote_title === '' || this.quote_title.includes('Propuesta Comercial para')) {
+                                this.quote_title = `Propuesta Comercial para ${this.loadedEntity.name}`;
+                            }
+                        }
+                    } else {
+                        this.quoteable_type = '';
+                        this.quoteable_id = '';
+                        this.loadedEntity = { name: '', email: '', company: '' };
+                    }
+                },
+                saveQuickProspect() {
+                    this.errorMessage = '';
+                    fetch("{{ route('prospects.store') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(this.quickProspect)
+                    })
+                    .then(response => {
+                        if (!response.ok && response.status !== 422) throw new Error();
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // Añadir al select dinámicamente
+                            const select = document.querySelector('select[x-model="selectedIdentifier"]');
+                            const optgroup = select.querySelector('optgroup[label*="Prospectos"]');
+                            const newText = `${data.prospect.company_name || data.prospect.contact_name} (Nuevo Prospecto)`;
+                            const newOption = new Option(newText, data.identifier);
+                            newOption.dataset.name = data.prospect.company_name || data.prospect.contact_name;
+                            newOption.dataset.email = data.prospect.email;
+                            newOption.dataset.company = data.prospect.company_name;
+                            optgroup.appendChild(newOption);
+                            
+                            // Seleccionar y cerrar
+                            this.selectedIdentifier = data.identifier;
+                            this.updateQuoteable(data.identifier);
+                            this.showModal = false;
+                        } else {
+                            if (data.errors) {
+                                this.errorMessage = Object.values(data.errors).flat().join(' | ');
+                            } else {
+                                this.errorMessage = data.message || 'Error al guardar el prospecto.';
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        this.errorMessage = 'Hubo un error inesperado al procesar la solicitud.';
+                    });
+                },
                 addItem() {
                     this.items.push({ service_id: '', description: '', quantity: 1, unit_price: 0.00 });
                 },

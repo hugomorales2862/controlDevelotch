@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\HasAuditLog;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PaymentReceipt extends Model
 {
+    use HasAuditLog;
     use HasFactory;
 
     protected $fillable = [

@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\HasAuditLog;
+
 use Illuminate\Database\Eloquent\Model;
 
 class Expense extends Model
 {
+    use HasAuditLog;
     protected $fillable = [
         'description',
         'amount',

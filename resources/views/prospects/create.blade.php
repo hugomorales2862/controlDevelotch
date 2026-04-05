@@ -55,10 +55,10 @@
 
                         <!-- Status -->
                         <div>
-                            <label for="status" class="block font-semibold text-xs text-slate-400 uppercase tracking-widest mb-2">Estado del Lead</label>
+                            <label for="status" class="block font-semibold text-xs text-slate-400 uppercase tracking-widest mb-2">Estado del Prospecto</label>
                             <select id="status" name="status" required
                                     class="block w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white py-4 px-5 shadow-sm transition-all">
-                                <option value="new" {{ old('status') == 'new' ? 'selected' : '' }}>Nuevo Lead</option>
+                                <option value="new" {{ old('status') == 'new' ? 'selected' : '' }}>Nuevo Prospecto</option>
                                 <option value="contacted" {{ old('status') == 'contacted' ? 'selected' : '' }}>Contactado</option>
                                 <option value="qualified" {{ old('status') == 'qualified' ? 'selected' : '' }}>Calificado</option>
                                 <option value="proposal" {{ old('status') == 'proposal' ? 'selected' : '' }}>En Propuesta</option>

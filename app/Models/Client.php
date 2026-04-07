@@ -22,8 +22,14 @@ class Client extends Model
         'dpi',
         'razon_social',
         'ejecutivo_id',
+        'user_id',
         'metadata',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function subscriptions()
     {

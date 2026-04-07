@@ -57,7 +57,8 @@
                                 {{ $sale->payment_method ?: 'Digital' }}
                             </td>
                             <td class="px-6 py-4 text-center text-sm font-medium">
-                                <div class="flex items-center justify-center space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div class="flex items-center justify-center space-x-3">
+                                    @can('eliminar ventas')
                                     <form action="{{ route('sales.destroy', $sale) }}" method="POST" class="inline-block delete-form">
                                         @csrf
                                         @method('DELETE')
@@ -65,6 +66,7 @@
                                             Eliminar
                                         </button>
                                     </form>
+                                    @endcan
                                 </div>
                             </td>
                         </tr>

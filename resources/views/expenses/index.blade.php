@@ -39,7 +39,8 @@
                                 <div class="text-sm font-black text-rose-400">-Q{{ number_format($expense->amount, 2) }}</div>
                             </td>
                             <td class="px-6 py-4 text-center text-sm font-medium">
-                                <div class="flex items-center justify-center space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div class="flex items-center justify-center space-x-3">
+                                    @can('eliminar gastos')
                                     <form action="{{ route('expenses.destroy', $expense) }}" method="POST" class="inline-block delete-form">
                                         @csrf
                                         @method('DELETE')
@@ -47,6 +48,7 @@
                                             Eliminar
                                         </button>
                                     </form>
+                                    @endcan
                                 </div>
                             </td>
                         </tr>

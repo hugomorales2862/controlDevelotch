@@ -43,7 +43,7 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'client_id' => 'required|exists:clients,id',
+            'client_id' => 'required|exists:clients,cli_id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'status' => 'required|in:planning,active,on_hold,completed,cancelled',
@@ -88,7 +88,7 @@ class ProjectController extends Controller
     public function update(Request $request, Project $project)
     {
         $validated = $request->validate([
-            'client_id' => 'required|exists:clients,id',
+            'client_id' => 'required|exists:clients,cli_id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'status' => 'required|in:planning,active,on_hold,completed,cancelled',

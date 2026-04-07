@@ -18,7 +18,7 @@
                             <label class="block font-medium text-xs text-slate-400 uppercase tracking-widest mb-1">Cliente</label>
                             <select name="client_id" class="block mt-1 w-full bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] focus:ring focus:ring-[#00f6ff]/20 rounded-xl text-white shadow-sm py-3 px-4" required>
                                 @foreach($clients as $c)
-                                    <option value="{{ $c->id }}" class="bg-[#0B1120]" {{ old('client_id', $subscription->client_id) == $c->id ? 'selected' : '' }}>{{ $c->name }}</option>
+                                    <option value="{{ $c->cli_id }}" class="bg-[#0B1120]" {{ old('client_id', $subscription->client_id) == $c->cli_id ? 'selected' : '' }}>{{ $c->name }}{{ $c->company ? ' — ' . $c->company : '' }}</option>
                                 @endforeach
                             </select>
                             <x-input-error :messages="$errors->get('client_id')" class="mt-2 text-rose-400" />

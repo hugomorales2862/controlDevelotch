@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Ticket;
 use App\Models\Client;
+use App\Models\User;
 use App\Models\TicketMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -61,12 +62,15 @@ class TicketController extends Controller
     public function edit(Ticket $ticket)
     {
         $clients = Client::orderBy('company')->get();
-        return view('tickets.edit', compact('ticket', 'clients'));
+        $users = User::all();
+        return view('tickets.edit', compact('ticket', 'clients', 'users'));
     }
 
     public function update(Request $request, Ticket $ticket)
     {
         $validated = $request->validate([
+            'subject' => 'required|string|max:255',
+            'description' => 'required|string',
             'status' => 'required|in:new,open,pending,resolved,closed',
             'priority' => 'required|in:low,medium,high,critical',
             'user_id' => 'nullable|exists:users,id',

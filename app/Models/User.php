@@ -22,6 +22,11 @@ class User extends Authenticatable
         $this->notify(new \App\Notifications\PasswordResetNotification($token));
     }
 
+    public function client()
+    {
+        return $this->hasOne(Client::class);
+    }
+
     /**
      * The attributes that are mass assignable.
      *

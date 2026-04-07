@@ -16,7 +16,7 @@
 
         /* Header */
         .header {
-            background: linear-gradient(135deg, #0B1120 0%, #1e293b 100%);
+            background: #0f172a;
             color: #fff;
             padding: 30px 40px;
             position: relative;
@@ -36,7 +36,7 @@
             letter-spacing: -1px;
             color: #fff;
         }
-        .brand-accent { color: #00f6ff; }
+        .brand-accent { color: #0284c7; }
         .brand-subtitle {
             font-size: 9px;
             color: #94a3b8;
@@ -52,8 +52,8 @@
         .status-badge {
             display: inline-block;
             padding: 4px 12px;
-            border: 1px solid #00f6ff;
-            color: #00f6ff;
+            border: 1px solid #0ea5e9;
+            color: #0ea5e9;
             font-size: 9px;
             font-weight: 700;
             text-transform: uppercase;
@@ -61,7 +61,7 @@
             border-radius: 20px;
         }
         .ref-number {
-            color: #00f6ff;
+            color: #0ea5e9;
             font-size: 11px;
             font-weight: 700;
             margin-top: 6px;
@@ -78,7 +78,7 @@
             display: table;
             width: 100%;
             background: #f8fafc;
-            border-bottom: 3px solid #00f6ff;
+            border-bottom: 3px solid #0284c7;
         }
         .party {
             display: table-cell;
@@ -94,7 +94,7 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: #00f6ff;
+            color: #0284c7;
             margin-bottom: 8px;
         }
         .party-name {
@@ -113,7 +113,7 @@
         .details-bar {
             display: table;
             width: 100%;
-            background: #0B1120;
+            background: #0f172a;
             padding: 12px 30px;
         }
         .detail-item {
@@ -132,7 +132,7 @@
             color: #e2e8f0;
             margin-top: 2px;
         }
-        .detail-value.highlight { color: #00f6ff; }
+        .detail-value.highlight { color: #0ea5e9; }
 
         /* Main Content */
         .content {
@@ -145,8 +145,8 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: #00f6ff;
-            border-left: 3px solid #00f6ff;
+            color: #0284c7;
+            border-left: 3px solid #0284c7;
             padding-left: 8px;
             margin-bottom: 8px;
         }
@@ -249,7 +249,7 @@
         }
         .total-final-value {
             text-align: right;
-            color: #0B1120;
+            color: #0f172a;
         }
 
         /* Notes */
@@ -270,7 +270,7 @@
 
         /* Footer */
         .footer {
-            background: #0B1120;
+            background: #0f172a;
             padding: 15px 40px;
             margin-top: 30px;
             display: table;
@@ -289,7 +289,7 @@
         .footer-right {
             text-align: right;
             font-size: 8px;
-            color: #00f6ff;
+            color: #0ea5e9;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -331,7 +331,7 @@
     <div class="header">
         <div class="header-top">
             <div class="header-brand">
-                <div class="brand-name">DEVELOTECH <span class="brand-accent">CORE</span></div>
+                <img src="{{ public_path('logo-pdf.jpg') }}" style="height: 40px; margin-bottom: 5px;" alt="Develotech Global">
                 <div class="brand-subtitle">Soluciones Tecnológicas de Alto Impacto</div>
             </div>
             <div class="header-badge">
@@ -366,7 +366,7 @@
     <div class="parties">
         <div class="party party-from">
             <div class="party-label">Emisor</div>
-            <div class="party-name">Develotech Core S.A.</div>
+            <div class="party-name">Develotech Global S.A.</div>
             <div class="party-sub">system@develotechgt.com</div>
             <div class="party-sub">Guatemala, C.A.</div>
         </div>
@@ -445,8 +445,8 @@
                         <div class="service-desc">{{ $item->description }}</div>
                     </td>
                     <td style="text-align:center;">{{ $item->quantity }}</td>
-                    <td class="price">Q{{ number_format($item->unit_price, 2) }}</td>
-                    <td class="price">Q{{ number_format($item->line_total, 2) }}</td>
+                    <td class="price" style="text-align:right;">Q{{ number_format($item->unit_price, 2) }}</td>
+                    <td class="price" style="text-align:right;">Q{{ number_format($item->line_total, 2) }}</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -484,7 +484,7 @@
 
     <!-- Footer -->
     <div class="footer">
-        <div class="footer-left">Develotech Core © {{ date('Y') }} — Documento Confidencial</div>
+        <div class="footer-left">Develotech Global © {{ date('Y') }} — Documento Confidencial</div>
         <div class="footer-right">Propuesta Comercial · {{ $quote->reference }}</div>
     </div>
 

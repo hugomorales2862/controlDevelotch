@@ -18,6 +18,8 @@ use App\Http\Controllers\BankAccountController;
 use App\Http\Controllers\PettyCashController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\EmailController;
+use App\Http\Controllers\ClientAuthController;
+use App\Http\Controllers\PortalController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -91,6 +93,28 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// Rutas de Autenticación de Cliente (Token-based)
+Route::prefix('ayuda')->group(function () {
+    Route::get('/login', [ClientAuthController::class, 'showLoginForm'])->name('client.auth.login');
+    Route::post('/send-token', [ClientAuthController::class, 'sendToken'])->name('client.auth.send-token');
+    Route::get('/verificar', [ClientAuthController::class, 'showVerifyForm'])->name('client.auth.verify');
+    Route::post('/verificar', [ClientAuthController::class, 'verifyToken'])->name('client.auth.verify.post');
+    Route::post('/logout', [ClientAuthController::class, 'logout'])->name('client.auth.logout');
+});
+
+// Portal del Cliente
+Route::middleware(['auth', 'role:client|admin|staff'])->prefix('portal')->group(function () {
+    Route::get('/', [PortalController::class, 'dashboard'])->name('portal.dashboard');
+    Route::get('/tickets', [PortalController::class, 'tickets'])->name('portal.tickets');
+    Route::post('/tickets/new', [PortalController::class, 'createTicket'])->name('portal.tickets.create');
+    Route::get('/tickets/{ticket}', [PortalController::class, 'showTicket'])->name('portal.tickets.show');
+    Route::post('/tickets/{ticket}/message', [PortalController::class, 'addMessage'])->name('portal.tickets.message');
+    
+    // Secciones futuras
+    Route::get('/facturas', [PortalController::class, 'invoices'])->name('portal.invoices');
+    Route::get('/pagos', [PortalController::class, 'payments'])->name('portal.payments');
 });
 
 require __DIR__.'/auth.php';

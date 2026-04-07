@@ -54,10 +54,13 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-center text-sm font-medium">
-                                <div class="flex items-center justify-center space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div class="flex items-center justify-center space-x-3">
+                                    @can('editar credenciales')
                                     <a href="{{ route('credentials.edit', $credential) }}" class="text-amber-400 hover:text-white bg-amber-400/10 hover:bg-amber-400/20 px-2.5 py-1.5 rounded-lg border border-amber-400/20 transition-colors">
                                         Editar
                                     </a>
+                                    @endcan
+                                    @can('eliminar credenciales')
                                     <form action="{{ route('credentials.destroy', $credential) }}" method="POST" class="inline-block delete-form">
                                         @csrf
                                         @method('DELETE')
@@ -65,6 +68,7 @@
                                             Eliminar
                                         </button>
                                     </form>
+                                    @endcan
                                 </div>
                             </td>
                         </tr>

@@ -69,7 +69,7 @@
     @if($modo == 'termico')
         <!-- CONTENIDO TÉRMICO -->
         <div class="header">
-            <div class="logo">DEVELOTECH CORE</div>
+            <div class="logo"><img src="{{ asset('logo-pdf.png') }}" style="height: 30px;" alt="Develotech Global"></div>
             <div>Soluciones Tecnológicas</div>
             <div>NIT: 1234567-8</div>
         </div>
@@ -106,8 +106,8 @@
         <!-- CONTENIDO CARTA / PDF -->
         <div class="header-grid">
             <div class="brand">
-                <h1 style="margin: 0; font-size: 28px; font-weight: 900;">DEVELOTECH</h1>
-                <p style="margin: 0; color: #64748b; font-size: 12px; letter-spacing: 2px;">ERP CORE SYSTEM</p>
+                <h1 style="margin: 0; font-size: 28px; font-weight: 900;"><img src="{{ asset('logo-pdf.png') }}" style="height: 40px;" alt="Develotech Global"></h1>
+                <p style="margin: 0; color: #64748b; font-size: 12px; letter-spacing: 2px;">GLOBAL SYSTEM</p>
             </div>
             <div class="receipt-badge">
                 <div style="font-size: 10px; color: #64748b; font-weight: bold; text-transform: uppercase;">Comprobante de Ingreso</div>
@@ -160,7 +160,7 @@
         </div>
 
         <div style="position: absolute; bottom: 20mm; left: 20mm; right: 20mm; border-top: 1px solid #f1f5f9; padding-top: 20px; text-align: center; font-size: 10px; color: #94a3b8;">
-            Este documento es un comprobante de ingreso generado automáticamente por DEVELOTECH CORE. 
+            Este documento es un comprobante de ingreso generado automáticamente por DEVELOTECH GLOBAL. 
             Cualquier alteración anula su validez.
         </div>
     @endif

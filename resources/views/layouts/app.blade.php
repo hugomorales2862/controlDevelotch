@@ -6,6 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'Develotech Global') }} - SaaS Manager</title>
+        <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}?v=2">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -34,14 +35,18 @@
 
         <div class="min-h-screen flex relative z-10 w-full">
             
-            <!-- Sidebar -->
-            @include('layouts.sidebar')
+            <!-- Sidebar (hidden for clients) -->
+            @unless(auth()->check() && auth()->user()->hasRole('client'))
+                @include('layouts.sidebar')
+            @endunless
 
             <!-- Main Content Area -->
-            <div class="flex-1 flex flex-col min-h-screen transition-all duration-300 ml-0 md:ml-64 relative z-10">
+            <div class="flex-1 flex flex-col min-h-screen transition-all duration-300 {{ auth()->check() && auth()->user()->hasRole('client') ? 'ml-0' : 'ml-0 md:ml-64' }} relative z-10">
                 
-                <!-- Fixed Top Nav (Mobile mostly + Profile) -->
-                @include('layouts.topbar')
+                <!-- Fixed Top Nav (hidden for clients) -->
+                @unless(auth()->check() && auth()->user()->hasRole('client'))
+                    @include('layouts.topbar')
+                @endunless
 
                 @isset($header)
                     <header class="bg-[#0f172a]/80 backdrop-blur-md border-b border-[#1e293b] sticky top-0 z-20">

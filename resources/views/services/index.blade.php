@@ -38,13 +38,23 @@
                         </div>
                     @endif
 
-                    <div class="mt-auto pt-4 flex items-center justify-between">
-                        <a href="{{ route('services.edit', $service) }}" class="text-[10px] bg-[#00f6ff]/10 px-3 py-1.5 rounded border border-[#00f6ff]/20 font-bold text-[#00f6ff] hover:bg-[#00f6ff] hover:text-[#0B1120] uppercase tracking-widest transition-colors">Configurar Plan</a>
+                    <div class="mt-auto pt-4 flex items-center justify-between gap-2">
+                        @can('ver servicios')
+                        <a href="{{ route('services.show', $service) }}" class="inline-flex items-center gap-1.5 text-[10px] bg-slate-700/40 px-3 py-1.5 rounded border border-slate-600/40 font-bold text-slate-300 hover:bg-slate-600 hover:text-white uppercase tracking-widest transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            Ver
+                        </a>
+                        @endcan
+                        @can('editar servicios')
+                        <a href="{{ route('services.edit', $service) }}" class="text-[10px] bg-[#00f6ff]/10 px-3 py-1.5 rounded border border-[#00f6ff]/20 font-bold text-[#00f6ff] hover:bg-[#00f6ff] hover:text-[#0B1120] uppercase tracking-widest transition-colors">Configurar</a>
+                        @endcan
+                        @can('eliminar servicios')
                         <form action="{{ route('services.destroy', $service) }}" method="POST" class="delete-form">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-[10px] bg-rose-500/10 px-3 py-1.5 rounded border border-rose-500/20 font-bold text-rose-500 hover:bg-rose-500 hover:text-white uppercase tracking-widest transition-colors">Eliminar</button>
                         </form>
+                        @endcan
                     </div>
                 </div>
             </div>

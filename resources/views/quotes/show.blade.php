@@ -59,7 +59,7 @@
             <div class="p-12 border-b border-[#1e293b] bg-gradient-to-r from-[#0f172a] to-[#1e293b]">
                 <div class="flex justify-between items-start mb-8">
                     <div>
-                        <h1 class="text-4xl font-black text-white mb-2 tracking-tighter">DEVELOTECH <span class="text-[#00f6ff]">CORE</span></h1>
+                        <img src="{{ asset('develotech-global.png') }}" class="h-12 w-auto mb-2" alt="Develotech Global">
                         <p class="text-slate-500 text-sm font-medium italic">Soluciones Tecnológicas de Alto Impacto</p>
                     </div>
                     <div class="text-right">
@@ -158,7 +158,7 @@
             <!-- Footer for Branding -->
             <div class="p-12 bg-[#0B1120] flex justify-between items-center">
                 <div class="text-[10px] uppercase font-bold text-slate-600 tracking-tighter">
-                    DEVELOTECH CORE © {{ date('Y') }} - TODOS LOS DERECHOS RESERVADOS
+                    DEVELOTECH GLOBAL © {{ date('Y') }} - TODOS LOS DERECHOS RESERVADOS
                 </div>
                 <div class="flex gap-6">
                     <span class="text-[10px] font-black text-indigo-500 tracking-widest uppercase">Propuesta Confidencial</span>

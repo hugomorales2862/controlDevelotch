@@ -43,20 +43,26 @@
                                 <div class="text-xs text-slate-500">{{ $client->phone ?: 'Sin teléfono' }}</div>
                             </td>
                             <td class="px-6 py-4 text-center text-sm font-medium">
-                                <div class="flex items-center justify-center space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <a href="{{ route('clients.show', $client) }}" class="text-[#00f6ff] hover:text-white bg-[#00f6ff]/10 hover:bg-[#00f6ff]/20 px-2.5 py-1.5 rounded-lg border border-[#00f6ff]/20 transition-colors">
+                                <div class="flex items-center justify-center space-x-3">
+                                    @can('ver clientes')
+                                    <a href="{{ route('clients.show', $client) }}" class="text-[#00f6ff] hover:text-white bg-[#00f6ff]/10 hover:bg-[#00f6ff]/20 px-2.5 py-1.5 rounded-lg border border-[#00f6ff]/20 transition-colors" title="Ver">
                                         Ver
                                     </a>
-                                    <a href="{{ route('clients.edit', $client) }}" class="text-amber-400 hover:text-white bg-amber-400/10 hover:bg-amber-400/20 px-2.5 py-1.5 rounded-lg border border-amber-400/20 transition-colors">
+                                    @endcan
+                                    @can('editar clientes')
+                                    <a href="{{ route('clients.edit', $client) }}" class="text-amber-400 hover:text-white bg-amber-400/10 hover:bg-amber-400/20 px-2.5 py-1.5 rounded-lg border border-amber-400/20 transition-colors" title="Editar">
                                         Editar
                                     </a>
+                                    @endcan
+                                    @can('eliminar clientes')
                                     <form action="{{ route('clients.destroy', $client) }}" method="POST" class="inline-block delete-form">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-rose-400 hover:text-white bg-rose-400/10 hover:bg-rose-400/20 px-2.5 py-1.5 rounded-lg border border-rose-400/20 transition-colors">
+                                        <button type="submit" class="text-rose-400 hover:text-white bg-rose-400/10 hover:bg-rose-400/20 px-2.5 py-1.5 rounded-lg border border-rose-400/20 transition-colors" title="Eliminar">
                                             Eliminar
                                         </button>
                                     </form>
+                                    @endcan
                                 </div>
                             </td>
                         </tr>

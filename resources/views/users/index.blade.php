@@ -41,13 +41,17 @@
                             </td>
                             <td class="px-6 py-4 text-sm text-slate-500">{{ $user->created_at->format('d/m/Y') }}</td>
                             <td class="px-6 py-4 text-center text-sm font-medium">
-                                <div class="flex items-center justify-center space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div class="flex items-center justify-center space-x-3">
+                                    @can('editar usuarios')
                                     <a href="{{ route('users.edit', $user) }}" class="text-amber-400 hover:text-white bg-amber-400/10 hover:bg-amber-400/20 px-2.5 py-1.5 rounded-lg border border-amber-400/20 transition-colors">Editar</a>
+                                    @endcan
                                     @if($user->id !== auth()->id())
+                                    @can('eliminar usuarios')
                                     <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline-block delete-form">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="text-rose-400 hover:text-white bg-rose-400/10 hover:bg-rose-400/20 px-2.5 py-1.5 rounded-lg border border-rose-400/20 transition-colors">Eliminar</button>
                                     </form>
+                                    @endcan
                                     @endif
                                 </div>
                             </td>

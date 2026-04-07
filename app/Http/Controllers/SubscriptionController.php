@@ -25,7 +25,7 @@ class SubscriptionController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'client_id' => 'required|exists:clients,id',
+            'client_id' => 'required|exists:clients,cli_id',
             'service_id' => 'required|exists:services,id',
             'status' => 'required|in:active,suspended,canceled',
             'start_date' => 'required|date',
@@ -52,7 +52,7 @@ class SubscriptionController extends Controller
     public function update(Request $request, Subscription $subscription)
     {
         $validated = $request->validate([
-            'client_id' => 'required|exists:clients,id',
+            'client_id' => 'required|exists:clients,cli_id',
             'service_id' => 'required|exists:services,id',
             'status' => 'required|in:active,suspended,canceled',
             'start_date' => 'required|date',

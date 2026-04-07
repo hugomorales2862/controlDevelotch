@@ -49,13 +49,19 @@
                                 <div class="text-sm text-slate-300">{{ $contact->email ?? '—' }}</div>
                             </td>
                             <td class="px-6 py-4 text-center text-sm font-medium">
-                                <div class="flex items-center justify-center space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div class="flex items-center justify-center space-x-3">
+                                    @can('ver contactos')
                                     <a href="{{ route('clients.contacts.show', [$client, $contact]) }}" class="text-[#00f6ff] hover:text-white bg-[#00f6ff]/10 hover:bg-[#00f6ff]/20 px-2.5 py-1.5 rounded-lg border border-[#00f6ff]/20 transition-colors">Ver</a>
+                                    @endcan
+                                    @can('editar contactos')
                                     <a href="{{ route('clients.contacts.edit', [$client, $contact]) }}" class="text-amber-400 hover:text-white bg-amber-400/10 hover:bg-amber-400/20 px-2.5 py-1.5 rounded-lg border border-amber-400/20 transition-colors">Editar</a>
+                                    @endcan
+                                    @can('eliminar contactos')
                                     <form action="{{ route('clients.contacts.destroy', [$client, $contact]) }}" method="POST" class="inline-block delete-form">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="text-rose-400 hover:text-white bg-rose-400/10 hover:bg-rose-400/20 px-2.5 py-1.5 rounded-lg border border-rose-400/20 transition-colors">Eliminar</button>
                                     </form>
+                                    @endcan
                                 </div>
                             </td>
                         </tr>

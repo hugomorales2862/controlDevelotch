@@ -127,7 +127,7 @@
                 <a href="{{ route('login') }}" class="btn-primary px-10 py-4 rounded-xl font-bold text-black text-center w-full sm:w-auto">
                     ACCEDER AL SISTEMA
                 </a>
-                <a href="#" class="glass px-10 py-4 rounded-xl font-bold text-white text-center w-full sm:w-auto hover:bg-white/5">
+                <a href="{{ route('client.auth.login') }}" class="glass px-10 py-4 rounded-xl font-bold text-white text-center w-full sm:w-auto hover:bg-white/5">
                     SOPORTE TÉCNICO
                 </a>
             </div>

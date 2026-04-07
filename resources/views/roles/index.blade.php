@@ -30,13 +30,17 @@
                                 <span class="text-xs text-slate-500">{{ $role->permissions->count() }} permiso(s)</span>
                             </td>
                             <td class="px-6 py-4 text-center text-sm font-medium">
-                                <div class="flex items-center justify-center space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div class="flex items-center justify-center space-x-3">
+                                    @can('editar roles')
                                     <a href="{{ route('roles.edit', $role) }}" class="text-amber-400 hover:text-white bg-amber-400/10 hover:bg-amber-400/20 px-2.5 py-1.5 rounded-lg border border-amber-400/20 transition-colors">Editar</a>
+                                    @endcan
                                     @if($role->users_count === 0)
+                                    @can('eliminar roles')
                                     <form action="{{ route('roles.destroy', $role) }}" method="POST" class="inline-block delete-form">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="text-rose-400 hover:text-white bg-rose-400/10 hover:bg-rose-400/20 px-2.5 py-1.5 rounded-lg border border-rose-400/20 transition-colors">Eliminar</button>
                                     </form>
+                                    @endcan
                                     @endif
                                 </div>
                             </td>

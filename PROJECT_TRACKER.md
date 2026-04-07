@@ -37,14 +37,23 @@ Este documento sirve como un registro vivo de la arquitectura actual del proyect
 - **[NUEVO] Regionalización (Guatemala):** Se actualizó el símbolo de moneda de `$` a `Q` (Quetzales) en toda la interfaz (Dashboard, Ventas, Cotizaciones, Facturas, Gastos e Historial de Clientes) para alinearse con los estándares locales del usuario.
 - **[NUEVO] Localización Total de Prospectos:** Se eliminó el término anglosajón "Lead" en favor de "Prospecto" en todos los módulos, botones, etiquetas de estado y navegación, garantizando una interfaz 100% en español.
 - **[NUEVO] Vista de Detalle de Prospectos:** Se creó la vista faltante `prospects.show`, resolviendo el error de "View not found". Ahora es posible ver la información completa y el historial de cotizaciones de un prospecto antes de convertirlo.
-- **[NUEVO] Ciclo de Vida y Automatización CRM:** 
+- [NUEVO] Ciclo de Vida y Automatización CRM:** 
     - Se implementó la **Expiración Automática** de cotizaciones basada en la fecha de validez (Just-in-Time).
     - Se integró la **Auto-Conversión de Prospectos**: Al aprobar una cotización de un prospecto, el sistema lo promueve automáticamente a Cliente Real.
     - Se añadió la capacidad de **Notificación (`Notifiable`)** a los prospectos para el envío directo de propuestas por correo.
 - **[MEJORA] Experiencia de Usuario (SweetAlert2):** Se eliminaron todas las alertas nativas (`confirm`/`alert`) de JavaScript en el módulo de cotizaciones, sustituyéndolas por diálogos modernos de SweetAlert integrados globalmente en el layout.
-- **[NUEVO] Gestión de Vida de Registros:** Se añadieron botones de eliminación asistida (con confirmación premium) en el listado y detalle de cotizaciones.
-
-
+- **[NUEVO] Gestión de Vida de Registros:** Se añadieron botones de eliminación asistida (con confirmación premium conectada por SweetAlert2) en el listado y detalle tanto de módulos de Cotizaciones como de Proyectos.
+- **[FIX] Validación en el módulo de Proyectos:** Se corrigió el error SQL 1054 al procesar el crear/actualizar proyectos, modificando la validación del controlador para buscar y enrutar correctamente la llave primaria dinámica `cli_id` en lugar del predeterminado `id` en la tabla `clients`. Elevando la funcionalidad completa de su CRUD.
+- **[NUEVO] CRUD Completo en Suscripciones (Servicios Activos):**
+    - Se creó la vista de detalles (`subscriptions.show`) para visualizar la relación Cliente-Servicio y el progreso de vigencia.
+    - Se corrigió la validación de `client_id` en el `SubscriptionController` para apuntar correctamente a `cli_id`.
+    - Se actualizó el listado de suscripciones para incluir el botón de "Ver" (ojo) y estandarizar iconos.
+    - Se aseguró la pre-población correcta de datos en el formulario de edición, incluyendo el mapeo de llaves primarias personalizadas.
+- **[FIX] Restauración de Edición en Tickets:** Se solucionó el error de vista no encontrada creando `tickets.edit`, y se potenció el controlador para permitir la reasignación de tickets entre usuarios del equipo.
+- **[NUEVO] Estandarización de Interfaz CRUD:**
+    - Se eliminó a nivel de infraestructura global el comportamiento "Hover-to-Reveal" (clase `opacity-0 group-hover:opacity-100`) de todos los contenedores de acciones en tablas del ERP, haciendo los botones de Ver, Editar y Eliminar siempre e inamoviblemente visibles en todas las pantallas.
+    - Se garantizó la integración del botón de eliminar funcional (`.delete-form`) en más de 12 módulos principales de la plataforma (Tareas, Clientes, Servidores, etc.) donde antes había discrepancias u omisiones.
+- **[MEJORA] Gobernanza por Roles (Spatie):** Para evitar desastres contables con la integración global de las opciones de borrado, se envolvió *escrupulosamente* cada botón de acción en las tablas maestras dentro de directivas individuales de Spatie (`@can('ver ...')`, `@can('editar ...')`, `@can('eliminar ...')`). Los módulos contables como `Pagos` y logs nativos como `Auditorías` son ahora accesibles visualmente pero blindados lógicamente contra modificaciones no autorizadas a nivel front.
 
 ---
 

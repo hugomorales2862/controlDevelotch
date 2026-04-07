@@ -41,7 +41,18 @@
                     <div class="flex items-center justify-between pt-4 border-t border-[#1e293b]">
                         <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{{ $app->services_count ?? 0 }} Planes Configurados</span>
                         <div class="flex space-x-2">
+                            @can('editar aplicaciones')
                             <a href="{{ route('applications.edit', $app) }}" class="text-[10px] text-[#00f6ff] bg-[#00f6ff]/10 border border-[#00f6ff]/20 px-3 py-1.5 rounded uppercase font-bold tracking-widest hover:bg-[#00f6ff] hover:text-[#0B1120] transition-colors">Configurar</a>
+                            @endcan
+                            @can('eliminar aplicaciones')
+                            <form action="{{ route('applications.destroy', $app) }}" method="POST" class="inline-block delete-form">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-[10px] text-rose-400 bg-rose-400/10 border border-rose-400/20 px-3 py-1.5 rounded uppercase font-bold tracking-widest hover:bg-rose-400 hover:text-white transition-colors title="Eliminar">
+                                    Eliminar
+                                </button>
+                            </form>
+                            @endcan
                         </div>
                     </div>
                 </div>

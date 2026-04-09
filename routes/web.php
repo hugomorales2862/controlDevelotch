@@ -111,6 +111,7 @@ Route::middleware(['auth', 'role:client|admin|staff'])->prefix('portal')->group(
     Route::post('/tickets/new', [PortalController::class, 'createTicket'])->name('portal.tickets.create');
     Route::get('/tickets/{ticket}', [PortalController::class, 'showTicket'])->name('portal.tickets.show');
     Route::post('/tickets/{ticket}/message', [PortalController::class, 'addMessage'])->name('portal.tickets.message');
+    Route::post('/tickets/{ticket}/select-handler', [PortalController::class, 'selectHandler'])->name('portal.tickets.select-handler');
     
     // Secciones futuras
     Route::get('/facturas', [PortalController::class, 'invoices'])->name('portal.invoices');

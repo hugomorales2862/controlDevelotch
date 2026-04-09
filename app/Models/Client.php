@@ -60,4 +60,26 @@ class Client extends Model
     {
         return $this->hasMany(Domain::class, 'client_id', 'cli_id');
     }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class, 'client_id', 'cli_id');
+    }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class, 'client_id', 'cli_id');
+    }
+
+    public function payments()
+    {
+        return $this->hasManyThrough(
+            Payment::class,
+            Invoice::class,
+            'client_id', // Foreign key on invoices table...
+            'invoice_id', // Foreign key on payments table...
+            'cli_id', // Local key on clients table...
+            'id' // Local key on invoices table...
+        );
+    }
 }

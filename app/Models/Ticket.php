@@ -19,6 +19,7 @@ class Ticket extends Model
         'description',
         'status',
         'priority',
+        'handler_mode',
     ];
 
     public function client()

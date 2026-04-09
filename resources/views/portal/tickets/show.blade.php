@@ -53,21 +53,32 @@
             </div>
 
             <!-- Reply Form -->
-            <div class="bg-[#0f172a] rounded-3xl border border-[#1e293b] p-4 shadow-2xl relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#00f6ff] to-blue-600"></div>
-                <form id="chat-form" action="{{ route('portal.tickets.message', $ticket) }}" method="POST" class="relative z-10">
-                    @csrf
-                    <div class="flex gap-4">
-                        <textarea id="message-input" name="message" rows="1" required
-                                  class="flex-1 bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] rounded-2xl text-slate-100 text-sm py-4 px-6 transition-all resize-none overflow-hidden placeholder:italic"
-                                  placeholder="Escribe tu respuesta aquí... (Shift+Enter para nueva línea)"></textarea>
-                        
-                        <button type="submit" id="submit-btn"
-                                class="w-14 h-14 bg-gradient-to-tr from-[#00f2fe] to-[#4facfe] rounded-2xl flex items-center justify-center text-[#0B1120] hover:shadow-[0_0_20px_rgba(0,246,255,0.4)] transition-all duration-300">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                        </button>
-                    </div>
-                </form>
+            <div id="reply-form-container" class="{{ in_array($ticket->status, ['resolved', 'closed']) ? 'hidden' : '' }}">
+                <div class="bg-[#0f172a] rounded-3xl border border-[#1e293b] p-4 shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#00f6ff] to-blue-600"></div>
+                    <form id="chat-form" action="{{ route('portal.tickets.message', $ticket) }}" method="POST" class="relative z-10">
+                        @csrf
+                        <div class="flex gap-4">
+                            <textarea id="message-input" name="message" rows="1" required
+                                      class="flex-1 bg-[#0B1120] border border-[#1e293b] focus:border-[#00f6ff] rounded-2xl text-slate-100 text-sm py-4 px-6 transition-all resize-none overflow-hidden placeholder:italic"
+                                      placeholder="Escribe tu respuesta aquí... (Shift+Enter para nueva línea)"></textarea>
+                            
+                            <button type="submit" id="submit-btn"
+                                    class="w-14 h-14 bg-gradient-to-tr from-[#00f2fe] to-[#4facfe] rounded-2xl flex items-center justify-center text-[#0B1120] hover:shadow-[0_0_20px_rgba(0,246,255,0.4)] transition-all duration-300">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Closed Message -->
+            <div id="closed-message" class="{{ in_array($ticket->status, ['resolved', 'closed']) ? '' : 'hidden' }} bg-[#0B1120]/50 border border-slate-700/50 rounded-2xl p-6 text-center">
+                <p class="text-slate-400 text-sm italic">
+                    <svg class="w-8 h-8 mx-auto mb-3 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    Esta conversación ha finalizado. Si necesitas nueva asistencia, por favor inicia un nuevo chat de soporte.
+                </p>
+                <a href="{{ route('portal.tickets') }}" class="inline-block mt-4 text-[#00f6ff] text-xs font-black uppercase tracking-widest hover:underline">Volver a mis chats</a>
             </div>
         </div>
     </div>
@@ -80,23 +91,20 @@
             const input = document.getElementById('message-input');
             const feedback = document.getElementById('chat-feedback');
 
-            // Scroll to bottom
             const scrollToBottom = () => {
                 container.scrollTop = container.scrollHeight;
             };
             scrollToBottom();
 
-            // Auto-resize textarea
             input.addEventListener('input', function() {
                 this.style.height = 'auto';
                 this.style.height = (this.scrollHeight) + 'px';
             });
 
-            // Submit on Enter (optional, standard Chat behavior)
             input.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    form.dispatchEvent(new Event('submit'));
+                    document.getElementById('submit-btn').click();
                 }
             });
 
@@ -129,12 +137,55 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error al enviar el mensaje. Reintenta.');
                 })
                 .finally(() => {
                     feedback.classList.add('hidden');
                 });
             });
+
+            // Recibir mensajes en vivo del administrador
+            if (window.Echo) {
+                const channel = window.Echo.private(`chat.{{ $ticket->id }}`);
+                
+                channel.listen('MessageSent', (e) => {
+                    // Evitar duplicar el mensaje si fue enviado por nosotros mismos 
+                    if (e.message.user_id !== {{ Auth::id() }}) {
+                        const html = e.html || `
+                            <div class="flex justify-start animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                <div class="max-w-[85%] sm:max-w-[70%] rounded-2xl p-4 bg-[#1e293b] border border-white/5 text-slate-300">
+                                    <div class="flex items-center gap-3 mb-1.5 opacity-80">
+                                        <span class="text-[9px] font-black uppercase tracking-widest">Soporte</span>
+                                        <span class="text-[8px] font-bold text-slate-500 italic">Ahora</span>
+                                    </div>
+                                    <div class="text-sm leading-relaxed whitespace-pre-wrap">${e.message.message}</div>
+                                </div>
+                            </div>
+                        `;
+                        container.insertAdjacentHTML('beforeend', html);
+                        scrollToBottom();
+                    }
+                })
+                .listen('TicketStatusUpdated', (e) => {
+                    console.log('Status updated:', e.status);
+                    if (['resolved', 'closed'].includes(e.status)) {
+                        document.getElementById('reply-form-container').classList.add('hidden');
+                        document.getElementById('closed-message').classList.remove('hidden');
+                        
+                        // Opcional: Mostrar notificación visual
+                        if(window.Swal) {
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Chat Finalizado',
+                                text: 'Esta conversación ha sido cerrada por el equipo de soporte.',
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+                        }
+                    }
+                });
+            }
         });
     </script>
 </x-app-layout>

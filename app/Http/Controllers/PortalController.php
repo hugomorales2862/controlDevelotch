@@ -4,14 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\Ticket;
 use App\Models\TicketMessage;
+use App\Models\User;
+use App\Models\Invoice;
+use App\Models\Payment;
+use App\Mail\GenericNotification;
+use App\Events\MessageSent;
+use App\Services\GeminiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class PortalController extends Controller
 {
-    /**
-     * Dashboard principal del cliente
-     */
+    protected $gemini;
+
+    public function __construct(GeminiService $gemini)
+    {
+        $this->gemini = $gemini;
+    }
     public function dashboard()
     {
         $user = Auth::user();
@@ -28,20 +38,34 @@ class PortalController extends Controller
         return view('portal.dashboard', compact('client', 'activeTicketsCount'));
     }
 
-    /**
-     * Listado de tickets del cliente
-     */
     public function tickets()
     {
         $client = Auth::user()->client;
-        $tickets = Ticket::where('client_id', $client->cli_id)->latest()->paginate(10);
         
-        return view('portal.tickets.index', compact('tickets'));
+        // Obtener los últimos 5 tickets para el historial unificado
+        $recentTickets = Ticket::where('client_id', $client->cli_id)
+            ->latest()
+            ->take(5)
+            ->with(['messages.user', 'owner'])
+            ->get();
+
+        // Unificar y ordenar todos los mensajes
+        $unifiedMessages = collect();
+        foreach ($recentTickets->reverse() as $ticket) {
+            foreach ($ticket->messages as $msg) {
+                $msg->context_ticket_id = $ticket->id;
+                $msg->context_subject = $ticket->subject;
+                $unifiedMessages->push($msg);
+            }
+        }
+        $unifiedMessages = $unifiedMessages->sortBy('created_at');
+
+        // Identificar el ticket activo para el formulario de respuesta
+        $activeTicket = $recentTickets->whereNotIn('status', ['resolved', 'closed'])->first();
+
+        return view('portal.tickets.index', compact('unifiedMessages', 'activeTicket', 'recentTickets'));
     }
 
-    /**
-     * Crear un nuevo ticket/chat desde el portal
-     */
     public function createTicket(Request $request)
     {
         $validated = $request->validate([
@@ -50,7 +74,6 @@ class PortalController extends Controller
 
         $client = Auth::user()->client;
 
-        // Crear el ticket automáticamente
         $ticket = Ticket::create([
             'client_id' => $client->cli_id,
             'user_id' => Auth::id(),
@@ -60,25 +83,44 @@ class PortalController extends Controller
             'priority' => 'medium',
         ]);
 
-        // Crear el primer mensaje del chat
-        TicketMessage::create([
+        $message = TicketMessage::create([
             'ticket_id' => $ticket->id,
             'user_id' => Auth::id(),
             'message' => $validated['message'],
         ]);
 
-        return redirect()->route('portal.tickets.show', $ticket)
-            ->with('success', 'Tu conversación de soporte ha sido iniciada.');
+        $this->notifyAdmins($ticket, "Nuevo chat iniciado por {$client->name}: {$ticket->subject}");
+        
+        $html = view('portal.tickets._message', compact('message'))->render();
+        broadcast(new MessageSent($message, $html))->toOthers();
+
+        // Enviar invitación de DeveloAI
+        $aiMessage = TicketMessage::create([
+            'ticket_id' => $ticket->id,
+            'user_id' => null, // Sistema
+            'message' => '¡Hola! Soy **DeveloAI**, tu asistente inteligente. He recibido tu solicitud. ¿Cómo prefieres continuar?
+
+[DEVELO_AI_CHOICE]',
+        ]);
+
+        $aiHtml = view('portal.tickets._message', ['message' => $aiMessage])->render();
+        broadcast(new MessageSent($aiMessage, $aiHtml));
+        broadcast(new \App\Events\TicketStatusUpdated($ticket));
+
+        if ($request->ajax()) {
+            return response()->json([
+                'status' => 'success',
+                'redirect' => route('portal.tickets')
+            ]);
+        }
+
+        return redirect()->route('portal.tickets');
     }
 
-    /**
-     * Chat/Detalle de un ticket para el cliente
-     */
     public function showTicket(Ticket $ticket)
     {
         $client = Auth::user()->client;
 
-        // Seguridad: solo puede ver sus propios tickets
         if ($ticket->client_id !== $client->cli_id) {
             abort(403, 'No tienes permiso para ver este ticket.');
         }
@@ -87,9 +129,6 @@ class PortalController extends Controller
         return view('portal.tickets.show', compact('ticket'));
     }
 
-    /**
-     * Añadir mensaje (Chat AJAX)
-     */
     public function addMessage(Request $request, Ticket $ticket)
     {
         $client = Auth::user()->client;
@@ -102,42 +141,96 @@ class PortalController extends Controller
             'message' => 'required|string',
         ]);
 
+        if (in_array($ticket->status, ['resolved', 'closed'])) {
+            abort(403, 'Esta conversación ha sido finalizada.');
+        }
+
         $message = TicketMessage::create([
             'ticket_id' => $ticket->id,
             'user_id' => Auth::id(),
             'message' => $validated['message'],
         ]);
 
-        // Si el ticket estaba cerrado, quizás reabrirlo o dejarlo como está depende de política
-        // Aquí lo dejamos en "open" si el cliente responde
-        if (in_array($ticket->status, ['resolved', 'closed'])) {
-            $ticket->update(['status' => 'open']);
+        $html = view('portal.tickets._message', compact('message'))->render();
+        broadcast(new MessageSent($message, $html))->toOthers();
+
+        // Si el ticket está en modo AI, responder automáticamente
+        if ($ticket->handler_mode === 'ai') {
+            $aiResponse = $this->gemini->getResponse($client, $validated['message'], "Ticket #{$ticket->id}: {$ticket->subject}");
+            
+            $aiMessage = TicketMessage::create([
+                'ticket_id' => $ticket->id,
+                'user_id' => null, // Representa a DeveloAI
+                'message' => $aiResponse,
+            ]);
+
+            $aiHtml = view('portal.tickets._message', ['message' => $aiMessage])->render();
+            broadcast(new MessageSent($aiMessage, $aiHtml));
         }
 
         if ($request->ajax()) {
             return response()->json([
                 'status' => 'success',
                 'message' => 'Mensaje enviado',
-                'html' => view('portal.tickets._message', ['message' => $message])->render()
+                'html' => $html
             ]);
         }
 
-        return back()->with('success', 'Respuesta enviada.');
+        return back();
     }
 
-    /**
-     * Vista de Facturas (Placeholder)
-     */
+    public function selectHandler(Request $request, Ticket $ticket)
+    {
+        $client = Auth::user()->client;
+        if ($ticket->client_id !== $client->cli_id) { abort(403); }
+        
+        $mode = $request->input('mode');
+        if (!in_array($mode, ['human', 'ai'])) { abort(400); }
+
+        $ticket->update(['handler_mode' => $mode]);
+
+        $systemText = $mode === 'ai' 
+            ? '🤖 **DeveloAI Activado.** Estaré encantado de ayudarte con tus dudas sobre facturación o servicios. ¿En qué puedo ayudarte?'
+            : '👨‍💻 **Asignado a un asesor.** En breve un agente humano revisará tu mensaje. Puedes seguir escribiendo aquí.';
+
+        $message = TicketMessage::create([
+            'ticket_id' => $ticket->id,
+            'user_id' => null,
+            'message' => $systemText,
+        ]);
+
+        $html = view('portal.tickets._message', compact('message'))->render();
+        broadcast(new MessageSent($message, $html));
+        broadcast(new \App\Events\TicketStatusUpdated($ticket));
+
+        return response()->json(['status' => 'success']);
+    }
+
+    private function notifyAdmins(Ticket $ticket, $content)
+    {
+        $admins = User::role('admin')->get();
+        foreach ($admins as $admin) {
+            Mail::to($admin->email)->queue(new GenericNotification("Actualización de Chat #{$ticket->id}", $content));
+        }
+    }
+
     public function invoices()
     {
-        return view('portal.placeholder', ['title' => 'Mis Facturas']);
+        $client = Auth::user()->client;
+        $invoices = Invoice::where('client_id', $client->cli_id)->latest()->paginate(10);
+        return view('portal.invoices.index', compact('invoices'));
     }
 
-    /**
-     * Vista de Pagos (Placeholder)
-     */
     public function payments()
     {
-        return view('portal.placeholder', ['title' => 'Mis Pagos']);
+        $client = Auth::user()->client;
+        
+        $invoiceIds = Invoice::where('client_id', $client->cli_id)->pluck('id');
+        
+        $payments = Payment::whereIn('invoice_id', $invoiceIds)
+                           ->latest()
+                           ->paginate(10);
+                           
+        return view('portal.payments.index', compact('payments'));
     }
 }
